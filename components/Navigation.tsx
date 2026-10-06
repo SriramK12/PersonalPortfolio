@@ -1,8 +1,8 @@
 'use client';
-import { useState } from 'react';
-import Arrow from './Arrow';
-const links = [['Work','#work'],['Experience','#experience'],['Explore','#explore'],['Contact','#contact']];
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+const links = [['Work','/work/'],['Experience','/experience/'],['Explore','/explore/'],['About','/about/'],['Contact','/contact/']];
 export default function Navigation(){
- const [open,setOpen]=useState(false);
- return <header className="site-header"><a className="wordmark" href="#home" aria-label="Sriram Kakumanu home">SK<span className="wordmark-dot">.</span></a><button className="menu-toggle" aria-expanded={open} aria-controls="main-nav" onClick={()=>setOpen(!open)}>{open?'Close −':'Menu +'}</button><nav id="main-nav" className={open?'navigation open':'navigation'} aria-label="Main navigation">{links.map(([label,href])=><a key={href} href={href} onClick={()=>setOpen(false)}>{label}<span aria-hidden="true"><Arrow/></span></a>)}</nav></header>
+ const pathname=usePathname();
+ return <header className="site-header"><Link className="wordmark" href="/" aria-label="Home" aria-current={pathname==='/'?'page':undefined}>sk<span>.</span></Link><nav aria-label="Main navigation">{links.map(([label,href])=><Link key={href} href={href} aria-current={pathname.replace(/\/$/,'')===href.replace(/\/$/,'')||(href==='/work/'&&pathname.startsWith('/projects/'))?'page':undefined}>{label}</Link>)}</nav></header>
 }

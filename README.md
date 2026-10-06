@@ -1,41 +1,35 @@
-# Sriram Kakumanu — Homepage V0
+# Sriram Kakumanu — personal website
 
-Next.js App Router, React, TypeScript, custom CSS. Read AGENTS.md and MASTER_BUILD_BRIEF.md before changes.
+Next.js App Router, React, TypeScript, custom CSS. Read the local owner-supplied AGENTS.md and MASTER_BUILD_BRIEF.md before changes. The owner's latest requests override earlier visual and homepage direction in those documents.
+
+## Current owner direction
+
+Minimal black-and-purple design with modern sans-serif typography. Use separate pages reached by clicking navigation; keep the landing page to name, positioning, university, and links. No scrolling homepage combining all sections. No desk, scrapbook, ornamental taglines, ad libs, or placeholder explanations. Personal imagery and additional contact details require owner approval.
 
 ## Development
 
-Use Node 24 and npm 11. From this checkout:
+Node 24 and npm 11. From /workspace/PersonalPortfolio:
 
-    npm ci
+    npm ci --no-audit --no-fund --cache /tmp/portfolio-npm-cache
     npm run dev
+
+Use the existing isolated checkout. Do not create a worktree unless explicitly requested. Stop your own server before reinstalling dependencies.
 
 ## Validation
 
     npm run build
     npm run typecheck
 
-## Content and scope
+## Routes and content
 
-`content/site.ts` holds profile, project, experience, and archive content. `public/media` is reserved for approved personal images. Homepage navigation uses real section anchors; case-study routes and the full archive are future milestones, not dead links.
+Home `/`, Work `/work/`, Experience `/experience/`, Explore `/explore/`, About `/about/`, Contact `/contact/`, and project summaries `/projects/<id>/`. Shared navigation indicates the active route. Project and profile content lives in `content/site.ts`. Approved personal media belongs in `public/media/`; no personal photos have been supplied.
 
-V0 uses conservative facts from the supplied master brief. Metrics, dates, phone, email, social profiles, portraits, and personal stories require verification or approval. Public GitHub profile is derived from the supplied repository owner. StudySense is linked as the product URL supplied by the owner; its external claims have not been verified. Project visuals are editorial typography, not product screenshots. Search indexing is disabled until the launch factual review. No analytics or tracking is installed.
+Current facts come from the supplied brief. Disputed project metrics, dates, ownership details, phone, email, and unverified social accounts are omitted. Full case studies and the photo archive remain future work. Source briefs remain local and are not included in the hosted artifact. No tracking is installed. Search indexing remains disabled pending a launch factual review.
 
 ## GitHub Pages preview
 
-The workflow `.github/workflows/preview-pages.yml` builds a static export on pushes to `main` and deploys it with GitHub Actions. The repository Pages setting must use **GitHub Actions** as its source.
-
-Reproduce the hosted build locally:
+`.github/workflows/preview-pages.yml` builds and deploys on pushes to main. Pages source is GitHub Actions. Reproduce the hosted build:
 
     PREVIEW_BASE_PATH=/PersonalPortfolio npm run build:preview
 
-Only `out/` is uploaded to Pages. Source documents and repository files are not in that artifact. The homepage retains `noindex, nofollow`; this is a public preview, not access control. There is no custom-domain configuration. Expected URL after a successful deployment: `https://sriramk12.github.io/PersonalPortfolio/`.
-
-## Interactive homepage prototype
-
-The hero is an interactive field desk. `content/desk.ts` supplies both collections; `components/InteractiveDesk.tsx` handles object notes, bounded pointer dragging, arrow-key movement, and layout reset. Core profile and professional sections stay readable without JavaScript. Motion respects reduced-motion settings.
-
-`components/DonationExperiment.tsx` is a explicitly hypothetical PlateConnect decision demonstration. It compares distance-first ordering with an urgency-first rule; it is not a production algorithm or evidence of project outcomes. Personal objects are illustrations, not owner photographs or travel records.
-
-## Owner direction: minimal copy
-
-Keep copy concise and factual. Avoid decorative taglines, conversational asides, repeated positioning statements, and explanations about missing media or future setup in the visitor experience. Preserve useful navigation labels and disclosures needed to understand a prototype. Interactive and visual elements remain part of the direction.
+Only `out/` is uploaded. `trailingSlash: true` generates route directories with index.html so direct links and refreshes work on Pages. Preview: https://sriramk12.github.io/PersonalPortfolio/ . No custom domain is configured. `noindex, nofollow` is not access control.
