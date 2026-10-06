@@ -29,3 +29,9 @@ Reproduce the hosted build locally:
     PREVIEW_BASE_PATH=/PersonalPortfolio npm run build:preview
 
 Only `out/` is uploaded to Pages. Source documents and repository files are not in that artifact. The homepage retains `noindex, nofollow`; this is a public preview, not access control. There is no custom-domain configuration. Expected URL after a successful deployment: `https://sriramk12.github.io/PersonalPortfolio/`.
+
+## Interactive homepage prototype
+
+The hero is an interactive field desk. `content/desk.ts` supplies both collections; `components/InteractiveDesk.tsx` handles object notes, bounded pointer dragging, arrow-key movement, and layout reset. Core profile and professional sections stay readable without JavaScript. Motion respects reduced-motion settings.
+
+`components/DonationExperiment.tsx` is a explicitly hypothetical PlateConnect decision demonstration. It compares distance-first ordering with an urgency-first rule; it is not a production algorithm or evidence of project outcomes. Personal objects are illustrations, not owner photographs or travel records.
