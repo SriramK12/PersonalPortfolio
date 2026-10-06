@@ -35,3 +35,7 @@ Only `out/` is uploaded to Pages. Source documents and repository files are not 
 The hero is an interactive field desk. `content/desk.ts` supplies both collections; `components/InteractiveDesk.tsx` handles object notes, bounded pointer dragging, arrow-key movement, and layout reset. Core profile and professional sections stay readable without JavaScript. Motion respects reduced-motion settings.
 
 `components/DonationExperiment.tsx` is a explicitly hypothetical PlateConnect decision demonstration. It compares distance-first ordering with an urgency-first rule; it is not a production algorithm or evidence of project outcomes. Personal objects are illustrations, not owner photographs or travel records.
+
+## Owner direction: minimal copy
+
+Keep copy concise and factual. Avoid decorative taglines, conversational asides, repeated positioning statements, and explanations about missing media or future setup in the visitor experience. Preserve useful navigation labels and disclosures needed to understand a prototype. Interactive and visual elements remain part of the direction.
