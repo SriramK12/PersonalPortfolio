@@ -22,7 +22,7 @@ Use the existing isolated checkout. Do not create a worktree unless explicitly r
 
 ## Routes and content
 
-Home `/`, Work `/work/`, Experience `/experience/`, Explore `/explore/`, About `/about/`, Contact `/contact/`, and project summaries `/projects/<id>/`. Shared navigation indicates the active route. Project and profile content lives in `content/site.ts`. Approved personal media belongs in `public/media/`; no personal photos have been supplied.
+Home `/`, Work `/work/`, Experience `/experience/`, Explore `/explore/`, About `/about/`, Contact `/contact/`, and project summaries `/projects/<id>/`. Shared navigation indicates the active route. Project and profile content lives in `content/site.ts`. Approved personal media belongs in `public/media/`; the owner-supplied homepage portrait is installed.
 
 Current facts come from the supplied brief. Disputed project metrics, dates, ownership details, phone, email, and unverified social accounts are omitted. Full case studies and the photo archive remain future work. Source briefs remain local and are not included in the hosted artifact. No tracking is installed. Search indexing remains disabled pending a launch factual review.
 
