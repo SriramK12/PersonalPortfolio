@@ -60,7 +60,7 @@ export default function Profile() {
             {profile.honors.map((h) => (
               <li key={h.title + h.when}>
                 <span className="trophy-badge"><TrophyIcon /></span>
-                <span><b>{h.result}</b><small>{h.title} · {h.when}</small></span>
+                <span><b>{h.result}</b><small>{h.title}{h.when && ` · ${h.when}`}</small></span>
               </li>
             ))}
           </ul>
@@ -70,7 +70,6 @@ export default function Profile() {
           <h2>Gear</h2>
           <ul className="gear-list">
             {profile.degrees.map((d) => <li key={d}><GearIcon /><span><b>{d}</b><small>Degree</small></span></li>)}
-            {profile.minors.map((m) => <li key={m}><GearIcon /><span><b>{m}</b><small>Minor</small></span></li>)}
           </ul>
         </Item>
 

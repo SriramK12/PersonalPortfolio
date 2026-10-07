@@ -33,15 +33,15 @@ export const profile = {
   initials: 'SK',
   school: 'The University of Texas at Austin',
   classYear: '2028',
-  tagline: 'Product. Technology. Human behavior.',
-  bio: 'I study business and psychology, with a focus on product and technology.',
+  tagline: 'Product Manager.',
+  bio: "I study Management Information Systems and Psychology at the University of Texas at Austin. Outside of school, I'm usually chasing the next adventure, whether that's traveling somewhere new, training for a half marathon (my first one is coming up), playing tennis, or picking up a new language.",
   degrees: ['BBA, Management Information Systems', 'BA, Psychology'],
-  minors: ['Computer Science', 'Statistics & Data Science'],
   avatar: '/media/avatar.jpg',
   honors: [
     { title: 'Product@TX Product Design Competition', result: '1st Place', when: 'Spring 2026' },
     { title: 'Build Teams Demo Day', result: 'Best Overall', when: 'Fall 2025' },
     { title: 'Build Teams Demo Day', result: 'Best Tech', when: 'Spring 2025' },
+    { title: 'Coca-Cola Scholars Program', result: 'Regional Finalist', when: '' },
   ],
 };
 
