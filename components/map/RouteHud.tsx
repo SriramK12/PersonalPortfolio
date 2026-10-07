@@ -5,12 +5,21 @@ import { useState } from 'react';
 import { toMiles, walkTime } from '@/lib/geo';
 import { useStage } from './MapStage';
 
-export default function RouteHud({ labels }: { labels: Record<string, string> }) {
+export type RouteStats = { distance: number; movingTime: number };
+
+const duration = (s: number) => {
+  const m = Math.round(s / 60);
+  return m >= 60 ? `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}m` : `${m}m`;
+};
+
+/** `stats` holds real recorded totals (Strava); other routes show a walking estimate. */
+export default function RouteHud({ labels, stats = {} }: { labels: Record<string, string>; stats?: Record<string, RouteStats> }) {
   const { active, routes, progress } = useStage();
   const [p, setP] = useState(0);
   useMotionValueEvent(progress, 'change', setP);
   const route = active ? routes[active] : null;
   const label = active ? labels[active] : null;
+  const real = active ? stats[active] : undefined;
 
   return (
     <AnimatePresence mode="wait">
@@ -28,8 +37,12 @@ export default function RouteHud({ labels }: { labels: Record<string, string> })
           <span className="hud-name">{label}</span>
           {!route.dashed && (
             <>
-              <span className="hud-stat"><b>{toMiles(route.length * p).toFixed(2)}</b> mi</span>
-              <span className="hud-stat"><b>{walkTime(route.length * p)}</b> est.</span>
+              <span className="hud-stat"><b>{toMiles((real?.distance ?? route.length) * p).toFixed(2)}</b> mi</span>
+              {real ? (
+                <span className="hud-stat"><b>{duration(real.movingTime * p)}</b> moving</span>
+              ) : (
+                <span className="hud-stat"><b>{walkTime(route.length * p)}</b> est.</span>
+              )}
             </>
           )}
         </motion.div>

@@ -3,6 +3,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Daily rebuild to pull fresh Strava activities (12:00 UTC = 7am Central).
+  schedule:
+    - cron: '0 12 * * *'
 permissions:
   contents: read
   pages: write
@@ -23,6 +26,10 @@ jobs:
       - uses: actions/configure-pages@v5
       # Served from the root of the custom domain (sriramkakumanu.com), so no base path.
       - run: npm run build:preview
+        env:
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+          STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out
