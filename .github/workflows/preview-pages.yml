@@ -21,9 +21,8 @@ jobs:
           cache: npm
       - run: npm ci --no-audit --no-fund
       - uses: actions/configure-pages@v5
+      # Served from the root of the custom domain (sriramkakumanu.com), so no base path.
       - run: npm run build:preview
-        env:
-          PREVIEW_BASE_PATH: /PersonalPortfolio
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out

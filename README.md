@@ -47,6 +47,6 @@ Metrics come from the owner's résumé; phone, email, and unverified social acco
 
 `.github/workflows/preview-pages.yml` builds and deploys on pushes to main. Pages source is GitHub Actions. Reproduce the hosted build:
 
-    PREVIEW_BASE_PATH=/PersonalPortfolio npm run build:preview
+    npm run build:preview
 
-Only `out/` is uploaded. `trailingSlash: true` generates route directories with index.html so direct links and refreshes work on Pages. Preview: https://sriramk12.github.io/PersonalPortfolio/ . No custom domain is configured. `noindex, nofollow` is not access control.
+Only `out/` is uploaded. `trailingSlash: true` generates route directories with index.html so direct links and refreshes work on Pages. The site is served at https://sriramkakumanu.com/ (custom domain set in the repo's Pages settings; DNS at GoDaddy points the apex at GitHub Pages' A records and `www` at `sriramk12.github.io`). Old `sriramk12.github.io/PersonalPortfolio/` links redirect there. `PREVIEW_BASE_PATH` is still supported for hosting under a subpath. `noindex, nofollow` is not access control.
