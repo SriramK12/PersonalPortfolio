@@ -41,7 +41,7 @@ export const profile = {
     { title: 'Product@TX Product Design Competition', result: '1st Place', when: 'Spring 2026' },
     { title: 'Build Teams Demo Day', result: 'Best Overall', when: 'Fall 2025' },
     { title: 'Build Teams Demo Day', result: 'Best Tech', when: 'Spring 2025' },
-    { title: 'Coca-Cola Scholars Program', result: 'Regional Finalist', when: '' },
+    { title: 'Coca-Cola Scholars Program', result: 'Regional Finalist', when: '2024' },
   ],
 };
 
