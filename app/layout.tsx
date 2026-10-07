@@ -9,7 +9,7 @@ const display = Barlow_Condensed({ subsets: ['latin'], weight: ['500', '600', '7
 
 export const metadata: Metadata = {
   title: { default: 'Sriram Kakumanu', template: '%s · Sriram Kakumanu' },
-  description: 'Product, technology, and human behavior. Sriram Kakumanu, UT Austin, Class of 2028.',
+  description: 'Sriram Kakumanu, Product Manager. UT Austin, Class of 2028.',
   metadataBase: new URL(SITE_URL),
   openGraph: { type: 'website', siteName: 'Sriram Kakumanu' },
 };
