@@ -337,6 +337,8 @@ main > * { pointer-events: auto; }
 .route-card-label { padding: 0 12px; font-size: 15px; font-weight: 800; }
 .route-card-note { padding: 0 12px; font-size: 12px; color: var(--muted); }
 .coming-soon { font-size: 13px; color: var(--faint); }
+.powered-by { font-size: 12px; color: var(--faint); }
+.powered-by a { color: var(--orange); font-weight: 700; }
 
 /* Profile */
 .profile-head { display: flex; align-items: center; gap: 18px; }

@@ -1,5 +1,5 @@
 'use client';
-// Interest "routes" with a filter. Selecting a card traces that route on the map.
+// Saved routes (real Strava activities and items) with a filter. Selecting a card traces it on the map.
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import type { Interest } from '@/content/site';
@@ -7,15 +7,15 @@ import type { LngLat } from '@/lib/geo';
 import { useStage } from './map/MapStage';
 import RouteThumb from './RouteThumb';
 
-export default function RouteFilter({ interests, thumbs }: { interests: Interest[]; thumbs: Record<string, LngLat[]> }) {
+export default function RouteFilter({ items, thumbs }: { items: Interest[]; thumbs: Record<string, LngLat[]> }) {
   const { active, setActive, routes } = useStage();
-  const groups = ['All', ...new Set(interests.map((i) => i.group))];
+  const groups = ['All', ...new Set(items.map((i) => i.group))];
   const [group, setGroup] = useState('All');
-  const shown = interests.filter((i) => group === 'All' || i.group === group);
+  const shown = items.filter((i) => group === 'All' || i.group === group);
 
   const choose = (g: string) => {
     setGroup(g);
-    const first = interests.find((i) => g === 'All' || i.group === g);
+    const first = items.find((i) => g === 'All' || i.group === g);
     if (first) setActive(first.id);
   };
 

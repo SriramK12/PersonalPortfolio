@@ -8,14 +8,18 @@ import MapStage from '@/components/map/MapStage';
 import { Item, Panel } from '@/components/Panel';
 import { activities, interests, profile, segments } from '@/content/site';
 import { route, thumb } from '@/lib/routes';
+import { introActivity, stravaPace, stravaRoute, stravaStats } from '@/lib/strava';
 
 export default function Dashboard() {
-  const routes = [route('intro'), ...activities.map((a) => route(a.id))];
-  const labels = { intro: 'Campus to Lady Bird Lake', ...Object.fromEntries(activities.map((a) => [a.id, a.name])) };
+  // The intro records a real Strava activity when one is available, else the generated campus loop.
+  const real = introActivity();
+  const recorded = real ? stravaRoute(real) : route('intro');
+  const routes = [recorded, ...activities.map((a) => route(a.id))];
+  const labels = { [recorded.id]: real?.name ?? 'Campus to Lady Bird Lake', ...Object.fromEntries(activities.map((a) => [a.id, a.name])) };
 
   return (
-    <MapStage routes={routes} initial="intro" labels={labels} intro>
-      <Intro />
+    <MapStage routes={routes} initial={recorded.id} labels={labels} stats={real ? stravaStats([real]) : undefined} intro>
+      <Intro route={recorded.id} pace={real ? stravaPace(real) : undefined} distance={real?.distance} />
       <Panel className="dashboard">
         <Item className="athlete-card">
           <Avatar size={88} />

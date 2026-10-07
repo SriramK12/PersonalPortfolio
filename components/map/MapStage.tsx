@@ -8,7 +8,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { useMotionValue, type MotionValue } from 'motion/react';
 import { bearing, bounds, Track, type LngLat } from '@/lib/geo';
 import type { RouteData } from '@/lib/routes';
-import RouteHud from './RouteHud';
+import RouteHud, { type RouteStats } from './RouteHud';
 
 const ORANGE = '#fc4c02';
 const STYLE = 'https://tiles.openfreemap.org/styles/dark';
@@ -71,6 +71,7 @@ export default function MapStage({
   initial = null,
   pins = [],
   labels = {},
+  stats,
   intro = false,
   tracer = true,
   children,
@@ -79,6 +80,7 @@ export default function MapStage({
   initial?: string | null;
   pins?: Pin[];
   labels?: Record<string, string>;
+  stats?: Record<string, RouteStats>;
   intro?: boolean;
   tracer?: boolean;
   children: ReactNode;
@@ -292,11 +294,13 @@ export default function MapStage({
         chase(id, ms, onFrame) {
           stop();
           const track = tracks[id];
+          // Street level for a few km, pulling back for longer activities so the chase stays readable.
+          const zoom = Math.min(15, Math.max(12, 15 - Math.log2(Math.max(track.length / 8000, 1))));
           paint(id, 0, true);
           placeEnds(id);
           return new Promise<void>((resolve) => {
             chaseDone.current = resolve;
-            map.flyTo({ center: track.at(0), zoom: 15, pitch: 62, bearing: bearing(track.at(0), track.at(0.01)), duration: 2200, essential: true });
+            map.flyTo({ center: track.at(0), zoom, pitch: 62, bearing: bearing(track.at(0), track.at(0.01)), duration: 2200, essential: true });
             map.once('moveend', () => {
               if (chaseDone.current !== resolve) return; // cancelled during the approach
               let brg = map.getBearing();
@@ -305,7 +309,7 @@ export default function MapStage({
                 const t = Math.min((now - t0) / ms, 1);
                 const p = track.at(t);
                 brg = lerpAngle(brg, bearing(p, track.at(Math.min(t + 0.015, 1))), 0.045);
-                map.jumpTo({ center: p, bearing: brg, pitch: 62, zoom: 15 });
+                map.jumpTo({ center: p, bearing: brg, pitch: 62, zoom });
                 setDrawn(id, t);
                 moveDot(p);
                 progress.set(t);
@@ -370,7 +374,7 @@ export default function MapStage({
     <Ctx.Provider value={value}>
       <div className={`map-stage${ready ? ' is-ready' : ''}`} ref={container} aria-hidden="true" />
       <div className="map-vignette" aria-hidden="true" />
-      {revealed && <RouteHud labels={labels} />}
+      {revealed && <RouteHud labels={labels} stats={stats} />}
       {children}
     </Ctx.Provider>
   );

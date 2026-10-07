@@ -11,21 +11,21 @@ import { CheckIcon, GpsIcon, StopIcon } from './Icons';
 
 const KEY = 'sk-intro-done';
 const CHASE_MS = 8500;
-const ROUTE = 'intro';
-const PACE = 20 * 60; // seconds per mile at an easy walk
+const WALK_PACE = 20 * 60; // seconds per mile, used when the route isn't a real activity
 
 type Phase = 'boot' | 'gps' | 'ready' | 'recording' | 'saved' | 'done';
 
 const clock = (s: number) => [Math.floor(s / 3600), Math.floor(s / 60) % 60, Math.floor(s) % 60].map((n) => String(n).padStart(2, '0')).join(':');
 
-export default function Intro() {
+/** `route` is the route to record; `pace` (seconds per mile) and `distance` (meters) are its real totals, if known. */
+export default function Intro({ route = 'intro', pace = WALK_PACE, distance }: { route?: string; pace?: number; distance?: number }) {
   const { api, ready, routes, setRevealed } = useStage();
   const [phase, setPhase] = useState<Phase>('boot');
   const [t, setT] = useState(0);
   const finishing = useRef(false);
   const startButton = useRef<HTMLButtonElement>(null);
-  const miles = toMiles(routes[ROUTE].length) * t;
-  const seconds = miles * PACE;
+  const miles = toMiles(distance ?? routes[route].length) * t;
+  const seconds = miles * pace;
 
   const reveal = useCallback(() => {
     try { sessionStorage.setItem(KEY, '1'); } catch {}
@@ -62,7 +62,7 @@ export default function Intro() {
   const start = async () => {
     if (!api.current) return;
     setPhase('recording');
-    await api.current.chase(ROUTE, CHASE_MS, setT);
+    await api.current.chase(route, CHASE_MS, setT);
     finish();
   };
 
@@ -82,7 +82,7 @@ export default function Intro() {
   const stats = [
     { label: 'Time', value: clock(seconds) },
     { label: 'Distance', value: miles.toFixed(2), unit: 'mi' },
-    { label: 'Avg pace', value: t > 0.02 ? clock(PACE + Math.sin(t * 17) * 24).slice(3) : '--:--', unit: '/mi' },
+    { label: 'Avg pace', value: t > 0.02 ? clock(pace + Math.sin(t * 17) * 24).slice(3) : '--:--', unit: '/mi' },
   ];
 
   return (

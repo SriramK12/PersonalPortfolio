@@ -9,9 +9,11 @@
     "typecheck": "tsc --noEmit",
     "build:preview": "PREVIEW_STATIC_EXPORT=1 next build",
     "routes": "node scripts/build-routes.mjs",
-    "predev": "node scripts/copy-map-worker.mjs",
-    "prebuild": "node scripts/copy-map-worker.mjs",
-    "prebuild:preview": "node scripts/copy-map-worker.mjs"
+    "predev": "node scripts/copy-map-worker.mjs && npm run -s strava",
+    "prebuild": "node scripts/copy-map-worker.mjs && npm run -s strava",
+    "prebuild:preview": "node scripts/copy-map-worker.mjs && npm run -s strava",
+    "strava:auth": "node scripts/strava-auth.mjs",
+    "strava": "node --env-file-if-exists=.env.local scripts/fetch-strava.mjs"
   },
   "dependencies": {
     "maplibre-gl": "^6.13.0",
