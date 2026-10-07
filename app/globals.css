@@ -2,45 +2,27 @@
    Tokens
    ========================================================================== */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --orange: #fc4c02;
-  --orange-hover: #e34402;
-  --orange-soft: rgba(252, 76, 2, 0.1);
-  --green: #1a9e5c;
-  --text: #242428;
-  --muted: #6d6d78;
-  --faint: #9a9aa4;
-  --line: #e6e6eb;
-  --surface: #ffffff;
-  --surface-2: #f6f6f8;
-  --grid: #e8e8ee;
-  --map-bg: #f2f3f0;
-  --shadow: 0 1px 2px rgba(20, 20, 30, 0.06), 0 8px 28px rgba(20, 20, 30, 0.1);
-  --shadow-lg: 0 2px 6px rgba(20, 20, 30, 0.08), 0 20px 60px rgba(20, 20, 30, 0.18);
+  --orange-hover: #ff5f1a;
+  --orange-soft: rgba(252, 76, 2, 0.16);
+  --green: #2fbf77;
+  --text: #f2f2f5;
+  --muted: #a0a0ab;
+  --faint: #6c6c77;
+  --line: #2a2a31;
+  --surface: #17171b;
+  --surface-2: #212126;
+  --grid: #26262c;
+  --map-bg: #0b0b0d;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 28px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.55), 0 20px 60px rgba(0, 0, 0, 0.65);
   --radius: 14px;
   --topbar: 60px;
   --panel-w: 440px;
   --sans: var(--font-sans), system-ui, -apple-system, 'Segoe UI', sans-serif;
   --display: var(--font-display), var(--sans);
   --spring: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --orange-soft: rgba(252, 76, 2, 0.16);
-    --green: #2fbf77;
-    --text: #f2f2f5;
-    --muted: #a0a0ab;
-    --faint: #6f6f7a;
-    --line: #2e2e36;
-    --surface: #1b1b20;
-    --surface-2: #24242b;
-    --grid: #2b2b33;
-    --map-bg: #0e0e10;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 28px rgba(0, 0, 0, 0.45);
-    --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.5), 0 20px 60px rgba(0, 0, 0, 0.6);
-  }
 }
 
 /* ==========================================================================
@@ -132,11 +114,9 @@ main > * { pointer-events: auto; }
 .maplibregl-ctrl-group { border-radius: 12px !important; box-shadow: var(--shadow) !important; overflow: hidden; background: var(--surface) !important; }
 .maplibregl-ctrl-group button { width: 36px; height: 36px; }
 .maplibregl-ctrl-group button + button { border-top-color: var(--line) !important; }
-@media (prefers-color-scheme: dark) {
-  .maplibregl-ctrl-group button .maplibregl-ctrl-icon { filter: invert(1); }
-  .maplibregl-ctrl-attrib { background: rgba(20, 20, 24, 0.7) !important; color: #aaa; }
-  .maplibregl-ctrl-attrib a { color: #ccc !important; }
-}
+.maplibregl-ctrl-group button .maplibregl-ctrl-icon { filter: invert(1); }
+.maplibregl-ctrl-attrib { background: rgba(20, 20, 24, 0.7) !important; color: #aaa; }
+.maplibregl-ctrl-attrib a { color: #ccc !important; }
 
 /* MapLibre sets marker opacity itself, so hiding uses visibility. */
 .maplibregl-marker.is-hidden { visibility: hidden; }

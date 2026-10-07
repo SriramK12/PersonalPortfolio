@@ -4,7 +4,7 @@ Next.js App Router, React, TypeScript, custom CSS, MapLibre GL, and Motion. Read
 
 ## Current owner direction
 
-Strava-inspired design: a light grey (or dark, following the system setting) street map fills every page, with orange routes drawn on it. Content sits in a white panel over the map: a left column on desktop, a bottom sheet on mobile with a bottom tab bar. Heavy, cinematic motion: a GPS "recording" intro, self-drawing routes, a live GPS dot, camera flights between pages and cities, and counting stats. All motion respects `prefers-reduced-motion`.
+Strava-inspired dark design: a dark street map fills every page (always dark, regardless of system setting), with orange routes drawn on it. Content sits in a white panel over the map: a left column on desktop, a bottom sheet on mobile with a bottom tab bar. Heavy, cinematic motion: a GPS "recording" intro, self-drawing routes, a live GPS dot, camera flights between pages and cities, and counting stats. All motion respects `prefers-reduced-motion`.
 
 Inspired by Strava, not copied: Strava orange (`#fc4c02`) and layout patterns, but our own wordmark and icons, and never Strava's name or logo.
 
