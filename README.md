@@ -44,7 +44,7 @@ Real Strava activities: `scripts/fetch-strava.mjs` runs before every dev server 
 
 Map tiles come from OpenFreeMap (`positron` light, `dark` dark styles). No API key is required. Map data © OpenStreetMap contributors; the attribution control must stay visible.
 
-Metrics come from the owner's résumé; phone, email, and unverified social accounts are omitted. Kudos are per-visitor (localStorage) and never show a fabricated count. No tracking is installed. Search indexing remains disabled pending a launch factual review.
+Metrics come from the owner's résumé; phone, email, and unverified social accounts are omitted. Kudos are per-visitor (localStorage) and never show a fabricated count. No tracking is installed. Search indexing is on: `app/robots.ts` and `app/sitemap.ts` generate `robots.txt` and `sitemap.xml`, and redirect-only old URLs are marked noindex.
 
 ## GitHub Pages preview
 
@@ -52,4 +52,4 @@ Metrics come from the owner's résumé; phone, email, and unverified social acco
 
     npm run build:preview
 
-Only `out/` is uploaded. `trailingSlash: true` generates route directories with index.html so direct links and refreshes work on Pages. The site is served at https://sriramkakumanu.com/ (custom domain set in the repo's Pages settings; DNS at GoDaddy points the apex at GitHub Pages' A records and `www` at `sriramk12.github.io`). Old `sriramk12.github.io/PersonalPortfolio/` links redirect there. `PREVIEW_BASE_PATH` is still supported for hosting under a subpath. `noindex, nofollow` is not access control.
+Only `out/` is uploaded. `trailingSlash: true` generates route directories with index.html so direct links and refreshes work on Pages. The site is served at https://sriramkakumanu.com/ (custom domain set in the repo's Pages settings; DNS at GoDaddy points the apex at GitHub Pages' A records and `www` at `sriramk12.github.io`). Old `sriramk12.github.io/PersonalPortfolio/` links redirect there. `PREVIEW_BASE_PATH` is still supported for hosting under a subpath.

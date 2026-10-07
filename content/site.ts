@@ -1,6 +1,8 @@
 // Sources: owner-supplied master brief and the owner's résumé (Recruiting 2028).
 // Fields marked TODO are placeholders; empty strings and empty arrays are hidden on the site.
 
+export const SITE_URL = 'https://sriramkakumanu.com';
+
 export type Stat = { label: string; value: string };
 export type Place = { id: string; name: string; center: [number, number] };
 
