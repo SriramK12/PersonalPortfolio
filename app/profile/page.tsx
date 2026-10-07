@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
 import Avatar from '@/components/Avatar';
-import { ClubIcon, GearIcon, PinIcon, TrophyIcon } from '@/components/Icons';
+import { ClubIcon, ExternalIcon, FileIcon, GearIcon, GithubIcon, LinkedinIcon, MailIcon, PinIcon, TrophyIcon } from '@/components/Icons';
 import MapStage from '@/components/map/MapStage';
 import { Item, Panel } from '@/components/Panel';
-import { profile, segments } from '@/content/site';
+import { links, profile, segments } from '@/content/site';
 import { route } from '@/lib/routes';
 
 export const metadata: Metadata = { title: 'Profile' };
+
+const linkIcons = { GitHub: GithubIcon, LinkedIn: LinkedinIcon, Email: MailIcon, 'Résumé': FileIcon } as const;
 
 // Student organizations from the experience list.
 const clubs = segments.filter((s) => ['Texas Convergent', 'Texas Consulting / HP'].includes(s.company));
@@ -24,6 +26,25 @@ export default function Profile() {
           </div>
         </Item>
         <Item><p className="lede">{profile.bio}</p></Item>
+
+        <Item className="profile-section" id="contact">
+          <h2>Contact</h2>
+          <ul className="link-list">
+            {links.filter((l) => l.href).map((l) => {
+              const Icon = linkIcons[l.label as keyof typeof linkIcons];
+              const external = !l.href.startsWith('mailto:');
+              return (
+                <li key={l.label}>
+                  <a href={l.href} {...(external && { target: '_blank', rel: 'noopener noreferrer' })}>
+                    <span className="link-icon">{Icon && <Icon />}</span>
+                    <span className="link-text"><b>{l.label}</b>{l.handle && <small>{l.handle}</small>}</span>
+                    <ExternalIcon width={18} height={18} />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </Item>
 
         <Item className="profile-section">
           <h2>School</h2>

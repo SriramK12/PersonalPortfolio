@@ -14,7 +14,7 @@ const duration = (s: number) => {
 
 /** `stats` holds real recorded totals (Strava); other routes show a walking estimate. */
 export default function RouteHud({ labels, stats = {} }: { labels: Record<string, string>; stats?: Record<string, RouteStats> }) {
-  const { active, routes, progress } = useStage();
+  const { active, routes, progress, photoMode } = useStage();
   const [p, setP] = useState(0);
   useMotionValueEvent(progress, 'change', setP);
   const route = active ? routes[active] : null;
@@ -23,7 +23,7 @@ export default function RouteHud({ labels, stats = {} }: { labels: Record<string
 
   return (
     <AnimatePresence mode="wait">
-      {route && label && (
+      {route && label && !photoMode && (
         <motion.div
           key={active}
           className="route-hud"
@@ -35,15 +35,11 @@ export default function RouteHud({ labels, stats = {} }: { labels: Record<string
         >
           <span className={`hud-live${p < 1 ? ' is-recording' : ''}`}>{p < 1 ? 'Drawing' : 'Route'}</span>
           <span className="hud-name">{label}</span>
-          {!route.dashed && (
-            <>
-              <span className="hud-stat"><b>{toMiles((real?.distance ?? route.length) * p).toFixed(2)}</b> mi</span>
-              {real ? (
-                <span className="hud-stat"><b>{duration(real.movingTime * p)}</b> moving</span>
-              ) : (
-                <span className="hud-stat"><b>{walkTime(route.length * p)}</b> est.</span>
-              )}
-            </>
+          <span className="hud-stat"><b>{toMiles((real?.distance ?? route.length) * p).toFixed(2)}</b> mi</span>
+          {real ? (
+            <span className="hud-stat"><b>{duration(real.movingTime * p)}</b> moving</span>
+          ) : (
+            <span className="hud-stat"><b>{walkTime(route.length * p)}</b> est.</span>
           )}
         </motion.div>
       )}

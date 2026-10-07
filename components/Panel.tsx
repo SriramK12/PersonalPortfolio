@@ -1,9 +1,8 @@
 'use client';
 // The content sheet that floats over the map: a left column on desktop, a bottom sheet on mobile.
-// Children wrapped in <Item> enter in sequence once the stage is revealed.
+// Children wrapped in <Item> enter in sequence.
 import { motion, type Variants } from 'motion/react';
 import type { ReactNode } from 'react';
-import { useStage } from './map/MapStage';
 
 const sheet: Variants = {
   hidden: { opacity: 0, x: -36, y: 0 },
@@ -16,9 +15,8 @@ const item: Variants = {
 };
 
 export function Panel({ children, className = '' }: { children: ReactNode; className?: string }) {
-  const { revealed } = useStage();
   return (
-    <motion.section className={`panel ${className}`} variants={sheet} initial="hidden" animate={revealed ? 'shown' : 'hidden'}>
+    <motion.section className={`panel ${className}`} variants={sheet} initial="hidden" animate="shown">
       <div className="panel-grip" aria-hidden="true" />
       {children}
       <motion.footer className="panel-footer" variants={item}>
@@ -29,9 +27,9 @@ export function Panel({ children, className = '' }: { children: ReactNode; class
   );
 }
 
-export function Item({ children, className, as = 'div' }: { children: ReactNode; className?: string; as?: 'div' | 'header' | 'ul' | 'li' | 'dl' }) {
+export function Item({ children, className, id, as = 'div' }: { children: ReactNode; className?: string; id?: string; as?: 'div' | 'header' | 'ul' | 'li' | 'dl' }) {
   const Tag = motion[as];
-  return <Tag className={className} variants={item}>{children}</Tag>;
+  return <Tag className={className} id={id} variants={item}>{children}</Tag>;
 }
 
 export function PanelHeading({ eyebrow, title, children }: { eyebrow?: string; title: string; children?: ReactNode }) {

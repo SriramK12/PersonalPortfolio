@@ -5,11 +5,11 @@ type P = SVGProps<SVGSVGElement>;
 const base = (props: P) => ({ width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, 'aria-hidden': true, ...props });
 
 export const DashboardIcon = (p: P) => <svg {...base(p)}><path d="M3 11.5 12 4l9 7.5" /><path d="M5.5 10v9.5h13V10" /><path d="M10 19.5V14h4v5.5" /></svg>;
-export const ActivityIcon = (p: P) => <svg {...base(p)}><path d="M3 12h4l2.5-6 5 12 2.5-6h4" /></svg>;
+export const ProjectIcon = (p: P) => <svg {...base(p)}><rect x="3.5" y="7" width="17" height="12.5" rx="2" /><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3.5 12.5h17" /></svg>;
+export const PlaneIcon = (p: P) => <svg {...base(p)}><path d="M21 15.5v-2l-8-5V3.8a1.5 1.5 0 0 0-3 0v4.7l-8 5v2l8-2.5v4.8l-2.2 1.7V21l3.7-1 3.7 1v-1.5L13 17.8V13z" /></svg>;
 export const SegmentIcon = (p: P) => <svg {...base(p)}><path d="M4 18c3-1 4-6 8-6s5 4 8 3" /><circle cx="4" cy="18" r="1.6" fill="currentColor" /><circle cx="20" cy="15" r="1.6" fill="currentColor" /></svg>;
 export const RouteIcon = (p: P) => <svg {...base(p)}><circle cx="6" cy="18" r="2.2" /><circle cx="18" cy="6" r="2.2" /><path d="M8.2 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.8" /></svg>;
 export const ProfileIcon = (p: P) => <svg {...base(p)}><circle cx="12" cy="8" r="3.6" /><path d="M4.5 20c1.2-3.7 4-5.5 7.5-5.5s6.3 1.8 7.5 5.5" /></svg>;
-export const FollowIcon = (p: P) => <svg {...base(p)}><circle cx="9.5" cy="8" r="3.4" /><path d="M3 20c1-3.4 3.5-5 6.5-5s5.5 1.6 6.5 5" /><path d="M19 8v6M16 11h6" /></svg>;
 export const KudosIcon = (p: P) => <svg {...base(p)}><path d="M7 21V10l4.5-7c1.6 0 2.5 1.2 2.1 2.8L12.8 9H19a2 2 0 0 1 2 2.3l-1.2 7.4A2.7 2.7 0 0 1 17.2 21H7Z" /><path d="M7 10H3.5v11H7" /></svg>;
 export const ArrowIcon = (p: P) => <svg {...base(p)}><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
 export const BackIcon = (p: P) => <svg {...base(p)}><path d="M19 12H5M11 6l-6 6 6 6" /></svg>;
