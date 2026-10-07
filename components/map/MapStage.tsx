@@ -11,7 +11,7 @@ import type { RouteData } from '@/lib/routes';
 import RouteHud from './RouteHud';
 
 const ORANGE = '#fc4c02';
-const STYLE = { light: 'https://tiles.openfreemap.org/styles/positron', dark: 'https://tiles.openfreemap.org/styles/dark' };
+const STYLE = 'https://tiles.openfreemap.org/styles/dark';
 const CAMERA_KEY = 'sk-camera';
 const DRAW_MS = 1900;
 
@@ -43,7 +43,6 @@ export function useStage() {
 }
 
 const reducedMotion = () => typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-const isDark = () => matchMedia('(prefers-color-scheme: dark)').matches;
 
 /** Map padding that keeps routes clear of the content panel, measured against the map itself. */
 function padding(map: MLMap, revealed: boolean) {
@@ -108,11 +107,10 @@ export default function MapStage({
     chaseDone.current = null;
   }, []);
 
-  // Paint every route, emphasizing the active one. Safe to call after any style reload.
+  // Paint every route, emphasizing the active one.
   const paint = useCallback((id: string | null, drawn: number, solo = false) => {
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
-    const dark = isDark();
     for (const r of routeList) {
       const on = r.id === id;
       const dim = id !== null && !on;
@@ -123,7 +121,6 @@ export default function MapStage({
       map.setPaintProperty(`r-${r.id}`, 'line-width', on ? 4.5 : 3);
       map.setPaintProperty(`r-${r.id}`, 'line-opacity', on ? 1 : solo ? 0 : dim ? 0.32 : 0.85);
       if (!r.dashed) map.setPaintProperty(`r-${r.id}`, 'line-gradient', gradient(on ? drawn : 1));
-      map.setPaintProperty(`r-${r.id}-case`, 'line-color', dark ? '#111114' : '#ffffff');
     }
     if (id && map.getLayer(`r-${id}`)) for (const suffix of ['-glow', '-case', '']) map.moveLayer(`r-${id}${suffix}`);
   }, [routeList]);
@@ -214,8 +211,6 @@ export default function MapStage({
   // Create the map once.
   useEffect(() => {
     let disposed = false;
-    const media = matchMedia('(prefers-color-scheme: dark)');
-    let onScheme: (() => void) | undefined;
 
     (async () => {
       const ml = await import('maplibre-gl');
@@ -228,7 +223,7 @@ export default function MapStage({
 
       const map = new ml.Map({
         container: container.current,
-        style: media.matches ? STYLE.dark : STYLE.light,
+        style: STYLE,
         center: saved?.center ?? first,
         zoom: saved?.zoom ?? 1.6,
         bearing: saved?.bearing ?? 0,
@@ -267,7 +262,7 @@ export default function MapStage({
           map.addSource(`r-${r.id}`, { type: 'geojson', lineMetrics: true, data: { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: r.coords } } });
           const layout = { 'line-join': 'round', 'line-cap': 'round' } as const;
           map.addLayer({ id: `r-${r.id}-glow`, type: 'line', source: `r-${r.id}`, layout, paint: { 'line-width': 16, 'line-blur': 10, 'line-opacity': 0, 'line-gradient': gradient(1) } });
-          map.addLayer({ id: `r-${r.id}-case`, type: 'line', source: `r-${r.id}`, layout, paint: { 'line-width': 9, 'line-color': '#fff', 'line-opacity': 0 } });
+          map.addLayer({ id: `r-${r.id}-case`, type: 'line', source: `r-${r.id}`, layout, paint: { 'line-width': 9, 'line-color': '#0b0b0d', 'line-opacity': 0 } });
           map.addLayer({
             id: `r-${r.id}`, type: 'line', source: `r-${r.id}`, layout,
             paint: r.dashed
@@ -287,8 +282,6 @@ export default function MapStage({
         setReady(true);
       });
 
-      onScheme = () => map.setStyle(media.matches ? STYLE.dark : STYLE.light, { diff: false });
-      media.addEventListener('change', onScheme);
 
       api.current = {
         map,
@@ -330,7 +323,6 @@ export default function MapStage({
     return () => {
       disposed = true;
       cancelAnimationFrame(anim.current);
-      if (onScheme) media.removeEventListener('change', onScheme);
       const map = mapRef.current;
       if (map) {
         const c = map.getCenter();
