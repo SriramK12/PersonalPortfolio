@@ -376,6 +376,20 @@ main > * { pointer-events: auto; }
 .gear-list b { font-size: 14px; }
 .gear-list small { font-size: 12px; color: var(--muted); }
 
+/* Trophy case */
+.trophy-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.trophy-list li { display: flex; align-items: center; gap: 12px; }
+.trophy-list span:last-child { display: flex; flex-direction: column; }
+.trophy-list b { font-size: 14px; }
+.trophy-list small { font-size: 12px; color: var(--muted); }
+.trophy-badge {
+  display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: linear-gradient(160deg, #ffb347, var(--orange)); color: #fff;
+  transition: transform 0.4s var(--spring);
+}
+.trophy-list li:hover .trophy-badge { transform: rotate(-10deg) scale(1.08); }
+
 /* Follow */
 .follow-head { padding-top: 6px; }
 .link-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }

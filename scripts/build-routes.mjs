@@ -29,9 +29,9 @@ const P = {
   penick: [-97.7310, 30.2835],
   ibm: [-97.7175, 30.4040],
   domain: [-97.7253, 30.4021],
-  houBayou: [-95.3830, 29.7620],
-  houDiscovery: [-95.3593, 29.7535],
-  houMain: [-95.3640, 29.7580],
+  woodMarket: [-95.4625, 30.1605],
+  woodWaterway: [-95.4587, 30.1611],
+  woodHughes: [-95.4720, 30.1730],
   sjPark: [-121.8935, 37.3307],
   sjRiver: [-121.8990, 37.3330],
   sjPedro: [-121.8941, 37.3366],
@@ -48,7 +48,7 @@ const ROUTES = {
   'credit-card-advisor': [P.mccombs, P.shoal, P.pease, P.tower, P.mccombs],
   segments: [P.tower, P.gregory, P.mccombs, P.capitol, P.tower],
   'seg-ibm': [P.ibm, P.domain, P.ibm],
-  'seg-avion': [P.houMain, P.houBayou, P.houDiscovery, P.houMain],
+  'seg-avion': [P.woodMarket, P.woodWaterway, P.woodHughes, P.woodMarket],
   'seg-drink-barcode': [P.congressS, P.soco, P.congressS],
   'seg-adobe': [P.sjPark, P.sjRiver, P.sjPedro, P.sjCesar, P.sjPark],
   'seg-convergent': [P.mccombs, P.speedway, P.gregory, P.mccombs],
@@ -91,7 +91,7 @@ for (const [id, waypoints] of Object.entries(ROUTES)) {
   console.log(id.padEnd(22), out[id].length, 'points');
   await new Promise((r) => setTimeout(r, 400)); // be polite to the shared server
 }
-out.travel = [...arc(P.tower, P.houMain), ...arc(P.houMain, P.sjPark).slice(1)];
+out.travel = [...arc(P.tower, P.woodMarket), ...arc(P.woodMarket, P.sjPark).slice(1)];
 
 await writeFile(new URL('../content/routes.json', import.meta.url), JSON.stringify(out));
 console.log('wrote content/routes.json');

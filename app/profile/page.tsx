@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Avatar from '@/components/Avatar';
-import { ClubIcon, GearIcon, PinIcon } from '@/components/Icons';
+import { ClubIcon, GearIcon, PinIcon, TrophyIcon } from '@/components/Icons';
 import MapStage from '@/components/map/MapStage';
 import { Item, Panel } from '@/components/Panel';
 import { profile, segments } from '@/content/site';
@@ -31,6 +31,18 @@ export default function Profile() {
             <div><dt>University</dt><dd>{profile.school}</dd></div>
             <div><dt>Class</dt><dd>{profile.classYear}</dd></div>
           </dl>
+        </Item>
+
+        <Item className="profile-section">
+          <h2>Trophy case</h2>
+          <ul className="trophy-list">
+            {profile.honors.map((h) => (
+              <li key={h.title + h.when}>
+                <span className="trophy-badge"><TrophyIcon /></span>
+                <span><b>{h.result}</b><small>{h.title} · {h.when}</small></span>
+              </li>
+            ))}
+          </ul>
         </Item>
 
         <Item className="profile-section">

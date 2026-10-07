@@ -20,6 +20,7 @@ export const StopIcon = (p: P) => <svg {...base(p)}><rect x="6.5" y="6.5" width=
 export const GpsIcon = (p: P) => <svg {...base(p)}><circle cx="12" cy="12" r="3" /><circle cx="12" cy="12" r="7.5" /><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22" /></svg>;
 export const GearIcon = (p: P) => <svg {...base(p)}><path d="M4 7.5 12 4l8 3.5-8 3.5-8-3.5Z" /><path d="M7 9.5V14c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V9.5" /><path d="M20 7.5V13" /></svg>;
 export const ClubIcon = (p: P) => <svg {...base(p)}><circle cx="8" cy="9" r="3" /><circle cx="16.5" cy="9.5" r="2.5" /><path d="M2.5 19c.8-3 2.9-4.5 5.5-4.5s4.7 1.5 5.5 4.5M14 14.6c.8-.4 1.6-.6 2.5-.6 2.3 0 4 1.3 4.7 4" /></svg>;
+export const TrophyIcon = (p: P) => <svg {...base(p)}><path d="M8 4h8v5a4 4 0 0 1-8 0V4Z" /><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7M10 17h4v3h-4z" /></svg>;
 export const GithubIcon = (p: P) => <svg {...base(p)}><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21" /></svg>;
 export const MailIcon = (p: P) => <svg {...base(p)}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3.5 6 8.5 7 8.5-7" /></svg>;
 export const LinkedinIcon = (p: P) => <svg {...base(p)}><rect x="3" y="3" width="18" height="18" rx="3" /><path d="M8 10.5V17M8 7.5v.01M12 17v-6.5M12 13.5c0-1.7 1.1-3 2.7-3s2.3 1.1 2.3 3V17" /></svg>;
