@@ -2,21 +2,24 @@
 // Activities by category: real Strava runs and hikes, plus photos. Selecting a card traces it on the map.
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
+import type { Photo } from '@/content/photos';
 import type { LngLat } from '@/lib/geo';
 import { useStage } from './map/MapStage';
+import PhotoGallery from './PhotoGallery';
 import RouteThumb from './RouteThumb';
 
 export type ActivityItem = { id: string; label: string; group: string; note: string };
 
 export const GROUPS = ['Runs', 'Hikes', 'Photos'] as const;
 
-export default function RouteFilter({ items, thumbs }: { items: ActivityItem[]; thumbs: Record<string, LngLat[]> }) {
-  const { active, setActive } = useStage();
+export default function RouteFilter({ items, thumbs, photos }: { items: ActivityItem[]; thumbs: Record<string, LngLat[]>; photos: Photo[] }) {
+  const { active, setActive, setPhotoMode } = useStage();
   const [group, setGroup] = useState<string>(GROUPS[0]);
   const shown = items.filter((i) => i.group === group);
 
   const choose = (g: string) => {
     setGroup(g);
+    setPhotoMode(g === 'Photos');
     const first = items.find((i) => i.group === g);
     if (first) setActive(first.id);
   };
@@ -31,9 +34,8 @@ export default function RouteFilter({ items, thumbs }: { items: ActivityItem[]; 
           </button>
         ))}
       </div>
-      {shown.length === 0 && (
-        <p className="empty-note">{group === 'Photos' ? 'Photos coming soon.' : `No ${group.toLowerCase()} yet.`}</p>
-      )}
+      {group === 'Photos' && (photos.length ? <PhotoGallery photos={photos} /> : <p className="empty-note">Photos coming soon.</p>)}
+      {group !== 'Photos' && shown.length === 0 && <p className="empty-note">No {group.toLowerCase()} yet.</p>}
       <motion.ul className="route-grid" layout>
         <AnimatePresence mode="popLayout">
           {shown.map((i) => (

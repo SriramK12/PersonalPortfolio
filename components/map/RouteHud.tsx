@@ -14,7 +14,7 @@ const duration = (s: number) => {
 
 /** `stats` holds real recorded totals (Strava); other routes show a walking estimate. */
 export default function RouteHud({ labels, stats = {} }: { labels: Record<string, string>; stats?: Record<string, RouteStats> }) {
-  const { active, routes, progress } = useStage();
+  const { active, routes, progress, photoMode } = useStage();
   const [p, setP] = useState(0);
   useMotionValueEvent(progress, 'change', setP);
   const route = active ? routes[active] : null;
@@ -23,7 +23,7 @@ export default function RouteHud({ labels, stats = {} }: { labels: Record<string
 
   return (
     <AnimatePresence mode="wait">
-      {route && label && (
+      {route && label && !photoMode && (
         <motion.div
           key={active}
           className="route-hud"

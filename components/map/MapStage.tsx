@@ -15,6 +15,7 @@ const ORANGE = '#fc4c02';
 const DRAW_MS = 1900;
 
 export type Pin = { routeId: string; center: LngLat; label: string; side?: 'left' | 'right' };
+export type PhotoPin = { id: string; center: LngLat; thumb: string; caption: string };
 
 type StageContext = {
   active: string | null;
@@ -22,6 +23,12 @@ type StageContext = {
   ready: boolean;
   progress: MotionValue<number>;
   routes: Record<string, RouteData>;
+  /** Photo mode hides the routes and shows photo pins instead. */
+  photoMode: boolean;
+  setPhotoMode(on: boolean): void;
+  /** The open photo, if any; the map flies to it. */
+  photo: string | null;
+  setPhoto(id: string | null): void;
 };
 
 const Ctx = createContext<StageContext | null>(null);
@@ -55,6 +62,7 @@ export default function MapStage({
   pins = [],
   labels = {},
   stats,
+  photos = [],
   tracer = true,
   children,
 }: {
@@ -63,6 +71,7 @@ export default function MapStage({
   pins?: Pin[];
   labels?: Record<string, string>;
   stats?: Record<string, RouteStats>;
+  photos?: PhotoPin[];
   tracer?: boolean;
   children: ReactNode;
 }) {
@@ -70,6 +79,9 @@ export default function MapStage({
   const mapRef = useRef<MLMap | null>(null);
   const [ready, setReady] = useState(false);
   const [active, setActive] = useState<string | null>(initial);
+  const [photoMode, setPhotoMode] = useState(false);
+  const [photo, setPhoto] = useState<string | null>(null);
+  const photoMarkers = useRef<Marker[]>([]);
   const progress = useMotionValue(0);
   const routes = useMemo(() => Object.fromEntries(routeList.map((r) => [r.id, r])), [routeList]);
   const tracks = useMemo(() => Object.fromEntries(routeList.map((r) => [r.id, new Track(r.coords)])), [routeList]);
@@ -211,6 +223,19 @@ export default function MapStage({
         new ml.Marker({ element: node, anchor: left ? 'right' : 'left', offset: [left ? 7 : -7, 0] }).setLngLat(pin.center).addTo(map);
       }
 
+      for (const p of photos) {
+        const node = document.createElement('button');
+        node.type = 'button';
+        node.className = 'photo-pin';
+        node.setAttribute('aria-label', p.caption);
+        node.dataset.photo = p.id;
+        node.innerHTML = `<img src="${p.thumb}" alt="" loading="lazy" />`;
+        node.addEventListener('click', () => setPhoto(p.id));
+        const m = new ml.Marker({ element: node }).setLngLat(p.center).addTo(map);
+        show(m, false);
+        photoMarkers.current.push(m);
+      }
+
       map.on('style.load', () => {
         for (const r of routeList) {
           if (map.getSource(`r-${r.id}`)) continue;
@@ -249,10 +274,35 @@ export default function MapStage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // React to the active route once the map is ready.
+  // React to the active route once the map is ready (photo mode takes over the map instead).
   useEffect(() => {
-    if (ready) focus(active);
-  }, [active, ready, focus]);
+    if (ready && !photoMode) focus(active);
+  }, [active, ready, focus, photoMode]);
+
+  // Photo mode: hide routes and their markers, show photo pins, and frame them all.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!ready || !map) return;
+    for (const r of routeList) for (const suffix of ['-glow', '-case', '']) {
+      if (map.getLayer(`r-${r.id}${suffix}`)) map.setLayoutProperty(`r-${r.id}${suffix}`, 'visibility', photoMode ? 'none' : 'visible');
+    }
+    for (const m of photoMarkers.current) show(m, photoMode);
+    if (!photoMode) return;
+    stop();
+    moveDot(null);
+    placeEnds(null);
+    const cam = map.cameraForBounds(bounds([photos.map((p) => p.center)]), { padding: padding(map) });
+    if (cam) map.flyTo({ ...cam, bearing: 0, pitch: 0, duration: reducedMotion() ? 0 : 2200, essential: true });
+  }, [photoMode, ready, routeList, photos, stop, moveDot, placeEnds]);
+
+  // Fly to the open photo.
+  useEffect(() => {
+    const map = mapRef.current;
+    const p = photos.find((x) => x.id === photo);
+    if (!ready || !map || !p) return;
+    for (const m of photoMarkers.current) m.getElement().classList.toggle('is-active', m.getElement().dataset.photo === p.id);
+    map.flyTo({ center: p.center, zoom: 11, bearing: 0, pitch: 30, duration: reducedMotion() ? 0 : 2000, essential: true });
+  }, [photo, ready, photos]);
 
   // Reframe when the window changes shape.
   useEffect(() => {
@@ -273,8 +323,8 @@ export default function MapStage({
   }, []);
 
   const value = useMemo<StageContext>(
-    () => ({ active, setActive: select, ready, progress, routes }),
-    [active, select, ready, progress, routes],
+    () => ({ active, setActive: select, ready, progress, routes, photoMode, setPhotoMode, photo, setPhoto }),
+    [active, select, ready, progress, routes, photoMode, photo],
   );
 
   return (
