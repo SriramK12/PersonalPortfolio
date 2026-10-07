@@ -2,13 +2,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
-import { ActivityIcon, DashboardIcon, FollowIcon, Logo, ProfileIcon, RouteIcon, SegmentIcon } from './Icons';
+import { DashboardIcon, Logo, MailIcon, ProfileIcon, ProjectIcon, RouteIcon, SegmentIcon } from './Icons';
 
 const links = [
-  { label: 'Dashboard', href: '/', Icon: DashboardIcon },
-  { label: 'Activities', href: '/activities/', Icon: ActivityIcon },
-  { label: 'Segments', href: '/segments/', Icon: SegmentIcon },
-  { label: 'Routes', href: '/routes/', Icon: RouteIcon },
+  { label: 'Home', href: '/', Icon: DashboardIcon },
+  { label: 'Projects', href: '/projects/', Icon: ProjectIcon },
+  { label: 'Experience', href: '/experience/', Icon: SegmentIcon },
+  { label: 'Activities', href: '/activities/', Icon: RouteIcon },
   { label: 'Profile', href: '/profile/', Icon: ProfileIcon },
 ];
 
@@ -27,7 +27,7 @@ export default function Navigation() {
         animate={{ y: 0 }}
         transition={{ type: 'spring', stiffness: 200, damping: 26, delay: 0.1 }}
       >
-        <Link className="brand" href="/" aria-label="Sriram Kakumanu, dashboard">
+        <Link className="brand" href="/" aria-label="Sriram Kakumanu, home">
           <Logo />
           <span>sriram</span>
         </Link>
@@ -42,9 +42,9 @@ export default function Navigation() {
             );
           })}
         </nav>
-        <Link className={`follow-button${isCurrent(pathname, '/follow/') ? ' is-current' : ''}`} href="/follow/">
-          <FollowIcon width={17} height={17} />
-          Follow
+        <Link className="follow-button" href="/profile/#contact">
+          <MailIcon width={17} height={17} />
+          Contact
         </Link>
       </motion.header>
 
@@ -55,7 +55,7 @@ export default function Navigation() {
             <Link key={href} href={href} aria-current={current ? 'page' : undefined}>
               {current && <motion.span className="tabbar-pill" layoutId="tabbar-pill" transition={indicator} />}
               <Icon />
-              <span>{label === 'Dashboard' ? 'Home' : label}</span>
+              <span>{label}</span>
             </Link>
           );
         })}

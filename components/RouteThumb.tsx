@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { useMemo } from 'react';
 import type { LngLat } from '@/lib/geo';
 
-export default function RouteThumb({ coords, dashed = false, active = false }: { coords: LngLat[]; dashed?: boolean; active?: boolean }) {
+export default function RouteThumb({ coords, active = false }: { coords: LngLat[]; active?: boolean }) {
   const d = useMemo(() => {
     // Equirectangular projection corrected for latitude, fitted into a 100x60 box.
     const k = Math.cos((coords[0][1] * Math.PI) / 180);
@@ -27,11 +27,7 @@ export default function RouteThumb({ coords, dashed = false, active = false }: {
       </defs>
       <rect width="100" height="60" fill="url(#thumb-grid)" />
       <path d={d} className="route-thumb-case" />
-      {dashed ? (
-        <motion.path d={d} className="route-thumb-line" strokeDasharray="1.6 1.8" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }} />
-      ) : (
-        <motion.path d={d} className="route-thumb-line" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 1.6, ease: [0.65, 0, 0.35, 1], delay: 0.2 }} />
-      )}
+      <motion.path d={d} className="route-thumb-line" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 1.6, ease: [0.65, 0, 0.35, 1], delay: 0.2 }} />
     </svg>
   );
 }

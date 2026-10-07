@@ -51,11 +51,3 @@ export function stravaNote(a: StravaActivity) {
   const date = new Date(`${a.date}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   return `${toMiles(a.distance).toFixed(1)} mi · ${date}`;
 }
-
-/** Seconds per mile, from Strava's moving time. */
-export const stravaPace = (a: StravaActivity) => a.movingTime / Math.max(toMiles(a.distance), 0.01);
-
-/** The activity the intro "records": the most recent one of at least 3 km, else the longest. */
-export function introActivity(list = stravaActivities()) {
-  return list.find((a) => a.distance >= 3000) ?? [...list].sort((a, b) => b.distance - a.distance)[0] ?? null;
-}

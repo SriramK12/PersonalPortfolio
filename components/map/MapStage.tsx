@@ -4,35 +4,24 @@
 // reads as one continuous flight.
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { ExpressionSpecification, Map as MLMap, Marker } from 'maplibre-gl';
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useMotionValue, type MotionValue } from 'motion/react';
-import { bearing, bounds, Track, type LngLat } from '@/lib/geo';
+import { bounds, Track, type LngLat } from '@/lib/geo';
+import { createMap, reducedMotion, saveCamera } from '@/lib/map';
 import type { RouteData } from '@/lib/routes';
 import RouteHud, { type RouteStats } from './RouteHud';
 
 const ORANGE = '#fc4c02';
-const STYLE = 'https://tiles.openfreemap.org/styles/dark';
-const CAMERA_KEY = 'sk-camera';
 const DRAW_MS = 1900;
 
 export type Pin = { routeId: string; center: LngLat; label: string; side?: 'left' | 'right' };
-
-export type StageApi = {
-  map: MLMap;
-  /** Fly to the start of a route, then follow it with a chase camera. Resolves when done or cancelled. */
-  chase(id: string, ms: number, onFrame?: (t: number) => void): Promise<void>;
-  cancel(): void;
-};
 
 type StageContext = {
   active: string | null;
   setActive(id: string | null): void;
   ready: boolean;
-  revealed: boolean;
-  setRevealed(v: boolean): void;
   progress: MotionValue<number>;
   routes: Record<string, RouteData>;
-  api: RefObject<StageApi | null>;
 };
 
 const Ctx = createContext<StageContext | null>(null);
@@ -42,14 +31,10 @@ export function useStage() {
   return ctx;
 }
 
-const reducedMotion = () => typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 /** Map padding that keeps routes clear of the content panel, measured against the map itself. */
-function padding(map: MLMap, revealed: boolean) {
+function padding(map: MLMap) {
   const { clientWidth: w, clientHeight: h } = map.getContainer();
-  const pad = !revealed
-    ? { top: 120, bottom: 120, left: 60, right: 60 }
-    : w >= 900
+  const pad = w >= 900
       ? { top: 120, bottom: 110, left: Math.min(580, w * 0.46), right: 80 }
       : { top: 80, bottom: Math.round(h * 0.56), left: 36, right: 36 };
   // Never let padding swallow the map, or the fit collapses to a far-out view.
@@ -64,15 +49,12 @@ const gradient = (p: number, color = ORANGE): ExpressionSpecification =>
 // MapLibre owns marker opacity (it fades markers behind the globe), so toggle visibility instead.
 const show = (marker: Marker, on: boolean) => marker.getElement().classList.toggle('is-hidden', !on);
 
-const lerpAngle = (a: number, b: number, t: number) => a + ((((b - a) % 360) + 540) % 360 - 180) * t;
-
 export default function MapStage({
   routes: routeList,
   initial = null,
   pins = [],
   labels = {},
   stats,
-  intro = false,
   tracer = true,
   children,
 }: {
@@ -81,16 +63,13 @@ export default function MapStage({
   pins?: Pin[];
   labels?: Record<string, string>;
   stats?: Record<string, RouteStats>;
-  intro?: boolean;
   tracer?: boolean;
   children: ReactNode;
 }) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MLMap | null>(null);
-  const api = useRef<StageApi | null>(null);
   const [ready, setReady] = useState(false);
   const [active, setActive] = useState<string | null>(initial);
-  const [revealed, setRevealed] = useState(!intro);
   const progress = useMotionValue(0);
   const routes = useMemo(() => Object.fromEntries(routeList.map((r) => [r.id, r])), [routeList]);
   const tracks = useMemo(() => Object.fromEntries(routeList.map((r) => [r.id, new Track(r.coords)])), [routeList]);
@@ -99,18 +78,11 @@ export default function MapStage({
   const ends = useRef<Marker[]>([]);
   const activeRef = useRef(active);
   activeRef.current = active;
-  const revealedRef = useRef(revealed);
-  revealedRef.current = revealed;
 
-  const chaseDone = useRef<(() => void) | null>(null);
-  const stop = useCallback(() => {
-    cancelAnimationFrame(anim.current);
-    chaseDone.current?.();
-    chaseDone.current = null;
-  }, []);
+  const stop = useCallback(() => cancelAnimationFrame(anim.current), []);
 
   // Paint every route, emphasizing the active one.
-  const paint = useCallback((id: string | null, drawn: number, solo = false) => {
+  const paint = useCallback((id: string | null, drawn: number) => {
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
     for (const r of routeList) {
@@ -121,15 +93,15 @@ export default function MapStage({
       map.setPaintProperty(`r-${r.id}-glow`, 'line-opacity', on ? 0.28 : 0);
       map.setPaintProperty(`r-${r.id}-glow`, 'line-gradient', gradient(on ? drawn : 1));
       map.setPaintProperty(`r-${r.id}`, 'line-width', on ? 4.5 : 3);
-      map.setPaintProperty(`r-${r.id}`, 'line-opacity', on ? 1 : solo ? 0 : dim ? 0.32 : 0.85);
-      if (!r.dashed) map.setPaintProperty(`r-${r.id}`, 'line-gradient', gradient(on ? drawn : 1));
+      map.setPaintProperty(`r-${r.id}`, 'line-opacity', on ? 1 : dim ? 0.32 : 0.85);
+      map.setPaintProperty(`r-${r.id}`, 'line-gradient', gradient(on ? drawn : 1));
     }
     if (id && map.getLayer(`r-${id}`)) for (const suffix of ['-glow', '-case', '']) map.moveLayer(`r-${id}${suffix}`);
   }, [routeList]);
 
   const setDrawn = useCallback((id: string, p: number) => {
     const map = mapRef.current;
-    if (map?.getLayer(`r-${id}`) && !routes[id]?.dashed) map.setPaintProperty(`r-${id}`, 'line-gradient', gradient(p));
+    if (map?.getLayer(`r-${id}`)) map.setPaintProperty(`r-${id}`, 'line-gradient', gradient(p));
     if (map?.getLayer(`r-${id}-glow`)) map.setPaintProperty(`r-${id}-glow`, 'line-gradient', gradient(p));
   }, [routes]);
 
@@ -182,7 +154,7 @@ export default function MapStage({
     const b = coords[coords.length - 1];
     const loop = Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) < 0.0008;
     show(start.setLngLat(a), true);
-    show(finish.setLngLat(b), !loop && !routes[id!].dashed);
+    show(finish.setLngLat(b), !loop);
   }, [routes]);
 
   // Frame the active route (or everything), then draw it.
@@ -191,11 +163,11 @@ export default function MapStage({
     if (!map) return;
     stop();
     const lines = id ? [routes[id].coords] : routeList.map((r) => r.coords);
-    const cam = map.cameraForBounds(bounds(lines), { padding: padding(map, revealedRef.current), maxZoom: 15.2, bearing: id ? -14 : 0 });
+    const cam = map.cameraForBounds(bounds(lines), { padding: padding(map), maxZoom: 15.2, bearing: id ? -14 : 0 });
     if (!cam) return;
     // On the globe, bounds fitting leaves continent-scale views too far out; tighten them.
     if (!id && cam.zoom !== undefined && cam.zoom < 3.6) cam.zoom = Math.min(cam.zoom + 1, 3.6);
-    const pitch = id && !routes[id].dashed ? 48 : 0;
+    const pitch = id ? 48 : 0;
     paint(id, id ? 0 : 1);
     placeEnds(id);
     moveDot(null);
@@ -215,28 +187,10 @@ export default function MapStage({
     let disposed = false;
 
     (async () => {
-      const ml = await import('maplibre-gl');
-      if (disposed || !container.current) return;
-      ml.setWorkerUrl(`${location.origin}${process.env.NEXT_PUBLIC_BASE_PATH}/vendor/maplibre-gl-worker.mjs`);
-
-      let saved: { center: LngLat; zoom: number; bearing: number; pitch: number } | null = null;
-      try { saved = JSON.parse(sessionStorage.getItem(CAMERA_KEY) || 'null'); } catch {}
       const first = routeList[0].coords[0];
-
-      const map = new ml.Map({
-        container: container.current,
-        style: STYLE,
-        center: saved?.center ?? first,
-        zoom: saved?.zoom ?? 1.6,
-        bearing: saved?.bearing ?? 0,
-        pitch: saved?.pitch ?? 0,
-        maxPitch: 70,
-        attributionControl: { compact: true },
-        cooperativeGestures: false,
-        dragRotate: true,
-      });
+      const { ml, map } = await createMap(container.current!, { center: first, zoom: 1.6, bearing: 0, pitch: 0 });
+      if (disposed) return map.remove();
       mapRef.current = map;
-      map.addControl(new ml.NavigationControl({ visualizePitch: true }), 'bottom-right');
 
       const el = (cls: string) => Object.assign(document.createElement('div'), { className: cls });
       dot.current = new ml.Marker({ element: el('gps-dot'), pitchAlignment: 'map' }).setLngLat(first).addTo(map);
@@ -258,7 +212,6 @@ export default function MapStage({
       }
 
       map.on('style.load', () => {
-        map.setProjection({ type: 'globe' });
         for (const r of routeList) {
           if (map.getSource(`r-${r.id}`)) continue;
           map.addSource(`r-${r.id}`, { type: 'geojson', lineMetrics: true, data: { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: r.coords } } });
@@ -267,61 +220,19 @@ export default function MapStage({
           map.addLayer({ id: `r-${r.id}-case`, type: 'line', source: `r-${r.id}`, layout, paint: { 'line-width': 9, 'line-color': '#0b0b0d', 'line-opacity': 0 } });
           map.addLayer({
             id: `r-${r.id}`, type: 'line', source: `r-${r.id}`, layout,
-            paint: r.dashed
-              ? { 'line-color': ORANGE, 'line-width': 3, 'line-dasharray': [1.2, 1.6] }
-              : { 'line-width': 3, 'line-gradient': gradient(1) },
+            paint: { 'line-width': 3, 'line-gradient': gradient(1) },
           });
           map.on('click', `r-${r.id}`, () => setActive(r.id));
           map.on('mouseenter', `r-${r.id}`, () => (map.getCanvas().style.cursor = 'pointer'));
           map.on('mouseleave', `r-${r.id}`, () => (map.getCanvas().style.cursor = ''));
         }
-        // Before an intro reveals the page, keep the map clean: no routes yet.
-        paint(activeRef.current, revealedRef.current ? 1 : 0, !revealedRef.current);
+        paint(activeRef.current, 1);
       });
 
       map.once('load', () => {
         if (disposed) return;
         setReady(true);
       });
-
-
-      api.current = {
-        map,
-        cancel() {
-          map.stop();
-          stop();
-        },
-        chase(id, ms, onFrame) {
-          stop();
-          const track = tracks[id];
-          // Street level for a few km, pulling back for longer activities so the chase stays readable.
-          const zoom = Math.min(15, Math.max(12, 15 - Math.log2(Math.max(track.length / 8000, 1))));
-          paint(id, 0, true);
-          placeEnds(id);
-          return new Promise<void>((resolve) => {
-            chaseDone.current = resolve;
-            map.flyTo({ center: track.at(0), zoom, pitch: 62, bearing: bearing(track.at(0), track.at(0.01)), duration: 2200, essential: true });
-            map.once('moveend', () => {
-              if (chaseDone.current !== resolve) return; // cancelled during the approach
-              let brg = map.getBearing();
-              const t0 = performance.now();
-              const tick = (now: number) => {
-                const t = Math.min((now - t0) / ms, 1);
-                const p = track.at(t);
-                brg = lerpAngle(brg, bearing(p, track.at(Math.min(t + 0.015, 1))), 0.045);
-                map.jumpTo({ center: p, bearing: brg, pitch: 62, zoom });
-                setDrawn(id, t);
-                moveDot(p);
-                progress.set(t);
-                onFrame?.(t);
-                if (t < 1) anim.current = requestAnimationFrame(tick);
-                else stop();
-              };
-              anim.current = requestAnimationFrame(tick);
-            });
-          });
-        },
-      };
     })();
 
     return () => {
@@ -329,32 +240,28 @@ export default function MapStage({
       cancelAnimationFrame(anim.current);
       const map = mapRef.current;
       if (map) {
-        const c = map.getCenter();
-        try {
-          sessionStorage.setItem(CAMERA_KEY, JSON.stringify({ center: [c.lng, c.lat], zoom: map.getZoom(), bearing: map.getBearing(), pitch: map.getPitch() }));
-        } catch {}
+        saveCamera(map);
         map.remove();
       }
       mapRef.current = null;
-      api.current = null;
     };
     // The stage is mounted per page with fixed routes; it never needs to rebuild.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // React to the active route once the map is ready and the content is showing.
+  // React to the active route once the map is ready.
   useEffect(() => {
-    if (ready && revealed) focus(active);
-  }, [active, ready, revealed, focus]);
+    if (ready) focus(active);
+  }, [active, ready, focus]);
 
   // Reframe when the window changes shape.
   useEffect(() => {
-    if (!ready || !revealed) return;
+    if (!ready) return;
     let t = 0;
     const onResize = () => { clearTimeout(t); t = window.setTimeout(() => focus(activeRef.current), 250); };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, [ready, revealed, focus]);
+  }, [ready, focus]);
 
   // On phones the sheet covers the map once scrolled; bring the map back into view on selection.
   const select = useCallback((id: string | null) => {
@@ -366,15 +273,15 @@ export default function MapStage({
   }, []);
 
   const value = useMemo<StageContext>(
-    () => ({ active, setActive: select, ready, revealed, setRevealed, progress, routes, api }),
-    [active, select, ready, revealed, progress, routes],
+    () => ({ active, setActive: select, ready, progress, routes }),
+    [active, select, ready, progress, routes],
   );
 
   return (
     <Ctx.Provider value={value}>
       <div className={`map-stage${ready ? ' is-ready' : ''}`} ref={container} aria-hidden="true" />
       <div className="map-vignette" aria-hidden="true" />
-      {revealed && <RouteHud labels={labels} stats={stats} />}
+      <RouteHud labels={labels} stats={stats} />
       {children}
     </Ctx.Provider>
   );

@@ -65,6 +65,22 @@ export function downsample(coords: LngLat[], max: number): LngLat[] {
   return Array.from({ length: max }, (_, i) => coords[Math.round(i * step)]);
 }
 
+/** Points along the great circle from a to b (the shortest path over the globe). */
+export function greatCircle(a: LngLat, b: LngLat, steps = 128): LngLat[] {
+  const [l1, p1, l2, p2] = [a[0], a[1], b[0], b[1]].map(rad);
+  const d = 2 * Math.asin(Math.sqrt(Math.sin((p2 - p1) / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin((l2 - l1) / 2) ** 2));
+  if (d < 1e-9) return [a, b];
+  return Array.from({ length: steps + 1 }, (_, i) => {
+    const f = i / steps;
+    const A = Math.sin((1 - f) * d) / Math.sin(d);
+    const B = Math.sin(f * d) / Math.sin(d);
+    const x = A * Math.cos(p1) * Math.cos(l1) + B * Math.cos(p2) * Math.cos(l2);
+    const y = A * Math.cos(p1) * Math.sin(l1) + B * Math.cos(p2) * Math.sin(l2);
+    const z = A * Math.sin(p1) + B * Math.sin(p2);
+    return [(Math.atan2(y, x) * 180) / Math.PI, (Math.atan2(z, Math.hypot(x, y)) * 180) / Math.PI];
+  });
+}
+
 export const toMiles = (m: number) => m / 1609.344;
 
 /** Walking time at 3 mph, formatted like an activity duration. */

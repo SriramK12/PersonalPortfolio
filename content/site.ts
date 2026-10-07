@@ -4,7 +4,7 @@
 export type Stat = { label: string; value: string };
 export type Place = { id: string; name: string; center: [number, number] };
 
-export type Activity = {
+export type Project = {
   id: string;
   name: string;
   type: string;
@@ -25,8 +25,6 @@ export type Segment = {
   dates: string;
   highlights: string[];
 };
-
-export type Interest = { id: string; label: string; group: string; note: string };
 
 export const profile = {
   name: 'Sriram Kakumanu',
@@ -52,7 +50,7 @@ export const places: Place[] = [
   { id: 'san-jose', name: 'San Jose, CA', center: [-121.8935, 37.3307] },
 ];
 
-export const activities: Activity[] = [
+export const projects: Project[] = [
   {
     id: 'studysense',
     name: 'StudySense',
@@ -162,20 +160,21 @@ export const segments: Segment[] = [
   },
 ];
 
-export const interests: Interest[] = [
-  { id: 'travel', label: 'Travel', group: 'Outdoors', note: 'International' },
-  { id: 'hiking', label: 'Hiking', group: 'Outdoors', note: 'Barton Creek Greenbelt' },
-  { id: 'photography', label: 'Photography', group: 'Everyday', note: 'Downtown photo walk' },
-  { id: 'food', label: 'Food', group: 'Everyday', note: "Thai cuisine and Dunkin'" },
-  { id: 'tennis', label: 'Tennis', group: 'Sport', note: 'Doubles' },
-];
-
-// TODO: LinkedIn URL (not linked in the résumé PDF). Email and résumé are held until the owner approves publishing them. Empty href entries are hidden.
+// Résumé PDF is held until the owner approves publishing it. Empty href entries are hidden.
 export const links: { label: string; handle: string; href: string }[] = [
   { label: 'GitHub', handle: '@SriramK12', href: 'https://github.com/SriramK12' },
-  { label: 'LinkedIn', handle: '', href: '' },
-  { label: 'Email', handle: '', href: '' },
+  { label: 'Email', handle: 'sriramkakumanu@utexas.edu', href: 'mailto:sriramkakumanu@utexas.edu' },
+  { label: 'LinkedIn', handle: 'in/sriramkakumanu', href: 'https://www.linkedin.com/in/sriramkakumanu' },
   { label: 'Résumé', handle: 'PDF', href: '' },
+];
+
+// Where the home-page plane can fly. Each destination opens a section of the site.
+export type Destination = { id: string; label: string; href: string; place: string; center: [number, number]; code: string };
+export const destinations: Destination[] = [
+  { id: 'projects', label: 'Projects', href: '/projects/', place: 'Austin, TX', center: [-97.7394, 30.2862], code: 'AUS' },
+  { id: 'experience', label: 'Experience', href: '/experience/', place: 'San Jose, CA', center: [-121.8935, 37.3307], code: 'SJC' },
+  { id: 'activities', label: 'Activities', href: '/activities/', place: 'Guatemala', center: [-90.7346, 14.5586], code: 'GUA' },
+  { id: 'profile', label: 'Profile', href: '/profile/', place: 'Frisco, TX', center: [-96.8236, 33.1507], code: 'DFW' },
 ];
 
 export const placeById = (id: string) => places.find((p) => p.id === id)!;

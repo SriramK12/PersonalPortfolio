@@ -42,7 +42,7 @@ export default function SegmentList({ segments }: { segments: Segment[] }) {
                   <dl className="stat-row">
                     {s.context && <div><dt>Team</dt><dd>{s.context}</dd></div>}
                     {s.dates && <div><dt>Dates</dt><dd>{s.dates}</dd></div>}
-                    <div><dt>Segment</dt><dd>{toMiles(routes[s.id].length).toFixed(2)} mi</dd></div>
+                    <div><dt>Route</dt><dd>{toMiles(routes[s.id].length).toFixed(2)} mi</dd></div>
                   </dl>
                   {s.highlights.length > 0 && (
                     <ul className="highlights">

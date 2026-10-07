@@ -5,12 +5,12 @@ import { downsample, Track, type LngLat } from './geo';
 
 const all = raw as unknown as Record<string, LngLat[]>;
 
-export type RouteData = { id: string; coords: LngLat[]; length: number; dashed?: boolean };
+export type RouteData = { id: string; coords: LngLat[]; length: number };
 
 export function route(id: string, max = 400): RouteData {
   const coords = all[id];
   if (!coords) throw new Error(`Unknown route: ${id}`);
-  return { id, coords: downsample(coords, max), length: new Track(coords).length, dashed: id === 'travel' };
+  return { id, coords: downsample(coords, max), length: new Track(coords).length };
 }
 
 /** A tiny version of a route for SVG thumbnails. */

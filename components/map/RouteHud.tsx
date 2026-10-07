@@ -35,15 +35,11 @@ export default function RouteHud({ labels, stats = {} }: { labels: Record<string
         >
           <span className={`hud-live${p < 1 ? ' is-recording' : ''}`}>{p < 1 ? 'Drawing' : 'Route'}</span>
           <span className="hud-name">{label}</span>
-          {!route.dashed && (
-            <>
-              <span className="hud-stat"><b>{toMiles((real?.distance ?? route.length) * p).toFixed(2)}</b> mi</span>
-              {real ? (
-                <span className="hud-stat"><b>{duration(real.movingTime * p)}</b> moving</span>
-              ) : (
-                <span className="hud-stat"><b>{walkTime(route.length * p)}</b> est.</span>
-              )}
-            </>
+          <span className="hud-stat"><b>{toMiles((real?.distance ?? route.length) * p).toFixed(2)}</b> mi</span>
+          {real ? (
+            <span className="hud-stat"><b>{duration(real.movingTime * p)}</b> moving</span>
+          ) : (
+            <span className="hud-stat"><b>{walkTime(route.length * p)}</b> est.</span>
           )}
         </motion.div>
       )}

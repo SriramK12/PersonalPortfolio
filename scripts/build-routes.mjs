@@ -40,39 +40,18 @@ const P = {
 
 // Each section/item gets a route. Closed loops repeat the first waypoint.
 const ROUTES = {
-  intro: [P.tower, P.capitol, P.congressN, P.pfluger, P.zilker, P.mopacN, P.shoal, P.pease, P.tower],
-  dashboard: [P.tower, P.capitol, P.congressN, P.congressS, P.pfluger, P.shoal, P.tower],
-  activities: [P.mccombs, P.capitol, P.rainey, P.festival, P.congressS, P.congressN, P.mccombs],
   studysense: [P.tower, P.speedway, P.hydePark, P.penick, P.tower],
   plateconnect: [P.capitol, P.east6, P.rainey, P.congressN, P.capitol],
   'credit-card-advisor': [P.mccombs, P.shoal, P.pease, P.tower, P.mccombs],
-  segments: [P.tower, P.gregory, P.mccombs, P.capitol, P.tower],
   'seg-ibm': [P.ibm, P.domain, P.ibm],
   'seg-avion': [P.woodMarket, P.woodWaterway, P.woodHughes, P.woodMarket],
   'seg-drink-barcode': [P.congressS, P.soco, P.congressS],
   'seg-adobe': [P.sjPark, P.sjRiver, P.sjPedro, P.sjCesar, P.sjPark],
   'seg-convergent': [P.mccombs, P.speedway, P.gregory, P.mccombs],
   'seg-texas-consulting': [P.tower, P.capitol, P.mccombs, P.tower],
-  routes: [P.zilker, P.barton, P.spyglass, P.gusFruh, P.zilker],
   hiking: [P.spyglass, P.gusFruh, P.barton, P.spyglass],
-  photography: [P.capitol, P.congressN, P.rainey, P.east6, P.capitol],
-  food: [P.congressS, P.soco, P.festival, P.rainey, P.congressS],
-  tennis: [P.penick, P.gregory, P.speedway, P.penick],
   profile: [P.tower, P.pease, P.laguna, P.bonnell, P.laguna, P.shoal, P.tower],
-  follow: [P.mccombs, P.capitol, P.congressN, P.pfluger],
 };
-
-// Travel is a flight path, not a street route: great-circle-ish arcs between cities.
-function arc(a, b, steps = 64) {
-  const out = [];
-  for (let i = 0; i <= steps; i++) {
-    const t = i / steps;
-    const lng = a[0] + (b[0] - a[0]) * t;
-    const lat = a[1] + (b[1] - a[1]) * t + Math.sin(Math.PI * t) * Math.hypot(b[0] - a[0], b[1] - a[1]) * 0.18;
-    out.push([+lng.toFixed(5), +lat.toFixed(5)]);
-  }
-  return out;
-}
 
 async function route(waypoints) {
   const coords = waypoints.map((p) => p.join(',')).join(';');
@@ -91,7 +70,6 @@ for (const [id, waypoints] of Object.entries(ROUTES)) {
   console.log(id.padEnd(22), out[id].length, 'points');
   await new Promise((r) => setTimeout(r, 400)); // be polite to the shared server
 }
-out.travel = [...arc(P.tower, P.woodMarket), ...arc(P.woodMarket, P.sjPark).slice(1)];
 
 await writeFile(new URL('../content/routes.json', import.meta.url), JSON.stringify(out));
 console.log('wrote content/routes.json');
