@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import Redirect from '@/components/Redirect';
 
-// Redirect-only URL: keep it out of search results.
+// Strata used to be listed as Credit Card Advisor; keep that link working.
 export const metadata: Metadata = { robots: { index: false, follow: true } };
 
 export default function Moved() {
-  return <Redirect to="/personal/" />;
+  return <Redirect to="/projects/strata/" />;
 }

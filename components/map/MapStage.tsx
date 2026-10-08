@@ -170,10 +170,12 @@ export default function MapStage({
   }, [routes]);
 
   // Frame the active route (or everything), then draw it.
-  const focus = useCallback((id: string | null) => {
+  const focus = useCallback((selected: string | null) => {
     const map = mapRef.current;
     if (!map) return;
     stop();
+    // A selection without a route on this map (e.g. a remote role) shows the overview.
+    const id = selected && routes[selected] ? selected : null;
     const lines = id ? [routes[id].coords] : routeList.map((r) => r.coords);
     const cam = map.cameraForBounds(bounds(lines), { padding: padding(map), maxZoom: 15.2, bearing: id ? -14 : 0 });
     if (!cam) return;

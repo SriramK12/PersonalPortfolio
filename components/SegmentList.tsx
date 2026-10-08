@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useRef } from 'react';
 import type { Segment } from '@/content/site';
-import { placeById } from '@/content/site';
+import { placeName } from '@/content/site';
 import { toMiles } from '@/lib/geo';
 import { useStage } from './map/MapStage';
 import { PinIcon, SegmentIcon } from './Icons';
@@ -33,7 +33,7 @@ export default function SegmentList({ segments }: { segments: Segment[] }) {
                 <span className="segment-company">{s.company}</span>
                 <span className="segment-role">{s.role}</span>
               </span>
-              <span className="segment-place"><PinIcon width={13} height={13} /> {placeById(s.place).name}</span>
+              <span className="segment-place"><PinIcon width={13} height={13} /> {placeName(s.place)}</span>
               {open && <motion.span className="segment-marker" layoutId="segment-marker" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />}
             </button>
             <AnimatePresence initial={false}>
@@ -42,7 +42,7 @@ export default function SegmentList({ segments }: { segments: Segment[] }) {
                   <dl className="stat-row">
                     {s.context && <div><dt>Team</dt><dd>{s.context}</dd></div>}
                     {s.dates && <div><dt>Dates</dt><dd>{s.dates}</dd></div>}
-                    <div><dt>Route</dt><dd>{toMiles(routes[s.id].length).toFixed(2)} mi</dd></div>
+                    {routes[s.id] && <div><dt>Route</dt><dd>{toMiles(routes[s.id].length).toFixed(2)} mi</dd></div>}
                   </dl>
                   {s.highlights.length > 0 && (
                     <ul className="highlights">

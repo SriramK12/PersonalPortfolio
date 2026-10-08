@@ -1,5 +1,5 @@
 'use client';
-// Activities by category: real Strava runs and hikes, plus photos. Selecting a card traces it on the map.
+// Personal page categories: real Strava runs and hikes, plus photos. Selecting a card traces it on the map.
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import type { Photo } from '@/content/photos';

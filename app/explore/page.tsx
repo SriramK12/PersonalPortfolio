@@ -5,5 +5,5 @@ import Redirect from '@/components/Redirect';
 export const metadata: Metadata = { robots: { index: false, follow: true } };
 
 export default function Moved() {
-  return <Redirect to="/activities/" />;
+  return <Redirect to="/personal/" />;
 }

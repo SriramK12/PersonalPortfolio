@@ -42,10 +42,9 @@ const P = {
 const ROUTES = {
   studysense: [P.tower, P.speedway, P.hydePark, P.penick, P.tower],
   plateconnect: [P.capitol, P.east6, P.rainey, P.congressN, P.capitol],
-  'credit-card-advisor': [P.mccombs, P.shoal, P.pease, P.tower, P.mccombs],
+  strata: [P.mccombs, P.shoal, P.pease, P.tower, P.mccombs],
   'seg-ibm': [P.ibm, P.domain, P.ibm],
   'seg-avion': [P.woodMarket, P.woodWaterway, P.woodHughes, P.woodMarket],
-  'seg-drink-barcode': [P.congressS, P.soco, P.congressS],
   'seg-adobe': [P.sjPark, P.sjRiver, P.sjPedro, P.sjCesar, P.sjPark],
   'seg-convergent': [P.mccombs, P.speedway, P.gregory, P.mccombs],
   'seg-texas-consulting': [P.tower, P.capitol, P.mccombs, P.tower],
