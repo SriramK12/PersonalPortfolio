@@ -12,22 +12,28 @@ const { STRAVA_CLIENT_ID: id, STRAVA_CLIENT_SECRET: secret, STRAVA_REFRESH_TOKEN
 const log = (msg) => console.log(`[strava] ${msg}`);
 
 // Activity names never shown on the site: drinking, profanity, slang, and low-effort titles.
-// Matched as whole words, case-insensitive. Such activities get a Strava-style default name instead.
+// Such activities get a Strava-style default name instead (see defaultName).
+// Profanity matches anywhere in a word ("fuckass"); everything else matches whole words only,
+// so "Summer run" or "Brooklyn loop" are left alone.
+const PROFANITY = ['fuck', 'shit', 'bitch', 'damn', 'dammit', 'cunt', 'bastard', 'asshole', 'dumbass', 'badass', 'piss', 'wtf', 'lmao', 'lmfao'];
 const BLOCKED_WORDS = [
   'drink', 'drinks', 'drinking', 'drunk', 'beer', 'beers', 'booze', 'alcohol', 'tipsy', 'hungover', 'hangover', 'wasted', 'shots', 'party', 'partying',
-  'damn', 'dammit', 'fuck', 'fucking', 'fucked', 'shit', 'shitty', 'bitch', 'ass', 'asshole', 'crap', 'hell', 'piss', 'pissed', 'dick', 'wtf', 'lmao', 'lmfao', 'bs',
-  'weed', 'sex', 'sexy', 'freeball', 'freeballing', 'larp', 'jit', 'sum', 'blah', 'random',
+  'ass', 'crap', 'hell', 'dick', 'bs', 'weed', 'sex', 'sexy',
+  'freeball', 'freeballing', 'larp', 'jit', 'lil', 'bro', 'bros', 'bruh', 'dawg', 'ngl', 'lowkey', 'fr', 'ong', 'sus', 'sum',
+  'blah', 'random',
 ];
-const BLOCKED = new RegExp(`\\b(${BLOCKED_WORDS.join('|')})\\b`, 'i');
+const BLOCKED = new RegExp(`(${PROFANITY.join('|')})|\\b(${BLOCKED_WORDS.join('|')})\\b`, 'i');
 const isProfessional = (name) => !BLOCKED.test(name);
 
-/** Strava's default naming: time of day from the local start time, plus the sport. */
+/** Strava-style name from the local start time and sport; activities over 4 miles lead with their
+ * rounded distance, e.g. a 5.32-mile run at 10pm becomes "5-mile Night Run". */
 function defaultName(a) {
   const hour = Number(a.start_date_local.slice(11, 13));
   const time = hour >= 4 && hour < 11 ? 'Morning' : hour < 14 && hour >= 11 ? 'Lunch' : hour >= 14 && hour < 17 ? 'Afternoon' : hour >= 17 && hour < 21 ? 'Evening' : 'Night';
   const type = a.sport_type || a.type || '';
   const sport = /Run/.test(type) ? 'Run' : /Hike/.test(type) ? 'Hike' : /Ride/.test(type) ? 'Ride' : /Walk/.test(type) ? 'Walk' : 'Activity';
-  return `${time} ${sport}`;
+  const miles = a.distance / 1609.344;
+  return miles > 4 ? `${Math.round(miles)}-mile ${time} ${sport}` : `${time} ${sport}`;
 }
 
 /** Google encoded-polyline decoder; returns [lng, lat] pairs. */
