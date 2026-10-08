@@ -8,7 +8,7 @@ const links = [
   { label: 'Home', href: '/', Icon: DashboardIcon },
   { label: 'Projects', href: '/projects/', Icon: ProjectIcon },
   { label: 'Experience', href: '/experience/', Icon: SegmentIcon },
-  { label: 'Activities', href: '/activities/', Icon: RouteIcon },
+  { label: 'Personal', href: '/personal/', Icon: RouteIcon },
   { label: 'Profile', href: '/profile/', Icon: ProfileIcon },
 ];
 

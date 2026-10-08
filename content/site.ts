@@ -23,7 +23,7 @@ export type Segment = {
   company: string;
   role: string;
   context?: string;
-  place: Place['id'];
+  place: Place['id'] | 'remote';
   dates: string;
   highlights: string[];
   /** Hidden from the Experience page (kept here so it's easy to bring back). */
@@ -97,21 +97,22 @@ export const projects: Project[] = [
     date: 'Nov 2022 – May 2025',
   },
   {
-    id: 'credit-card-advisor',
-    name: 'Credit Card Advisor',
-    type: 'Prototype',
-    summary: 'Rule-based recommendations.',
-    description: 'A rule-based credit card advisor built with Claude Code.',
+    id: 'strata',
+    name: 'Strata',
+    type: 'V1 beta',
+    summary: 'Personalized credit card strategy.',
+    description: 'A personalized credit card strategist: where you are, where you\'re going, and the path to get there. Rule-based recommendations, built with Claude Code.',
     stats: [
       { label: 'Engine', value: 'Rule-based' },
       { label: 'Built with', value: 'Claude Code' },
-      { label: 'Status', value: 'Prototype' },
+      { label: 'Status', value: 'V1 beta' },
     ],
     splits: [
       { label: 'Implementation', value: 'AI-assisted, built with Claude Code' },
       { label: 'Data', value: 'Manual card-data snapshot' },
-      { label: 'Status', value: 'Prototype. No live demo or verified user adoption.' },
+      { label: 'Status', value: 'V1 beta' },
     ],
+    href: 'https://sriram.rayhanm.com/',
     date: '',
   },
 ];
@@ -133,7 +134,7 @@ export const segments: Segment[] = [
     ],
   },
   {
-    id: 'seg-drink-barcode', company: 'Drink Barcode', role: 'Product Management Intern', context: 'Seed-stage hydration brand', place: 'austin', dates: 'Jan – May 2025',
+    id: 'seg-drink-barcode', company: 'Drink Barcode', role: 'Product Management Intern', context: 'Seed-stage hydration brand', place: 'remote', dates: 'Jan – May 2025',
     highlights: [
       'Found creator-funnel drop-off in Snowflake and wireframed fixes, reducing CPA and raising campaign ROI by 18%',
       'Built a Snowflake dashboard showing flat stipends despite uneven ROI, and redesigned creator pay into 3 performance tiers',
@@ -177,8 +178,9 @@ export type Destination = { id: string; label: string; href: string; place: stri
 export const destinations: Destination[] = [
   { id: 'projects', label: 'Projects', href: '/projects/', place: 'Austin, TX', center: [-97.7394, 30.2862], code: 'AUS' },
   { id: 'experience', label: 'Experience', href: '/experience/', place: 'San Jose, CA', center: [-121.8935, 37.3307], code: 'SJC' },
-  { id: 'activities', label: 'Activities', href: '/activities/', place: 'Guatemala', center: [-90.7346, 14.5586], code: 'GUA' },
+  { id: 'personal', label: 'Personal', href: '/personal/', place: 'Guatemala', center: [-90.7346, 14.5586], code: 'GUA' },
   { id: 'profile', label: 'Profile', href: '/profile/', place: 'Frisco, TX', center: [-96.8236, 33.1507], code: 'DFW' },
 ];
 
 export const placeById = (id: string) => places.find((p) => p.id === id)!;
+export const placeName = (id: Segment['place']) => (id === 'remote' ? 'Remote' : placeById(id).name);

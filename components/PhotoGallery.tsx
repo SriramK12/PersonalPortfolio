@@ -1,5 +1,5 @@
 'use client';
-// Photo grid for the Activities page, plus a full-screen viewer. Opening a photo (from the grid
+// Photo grid for the Personal page, plus a full-screen viewer. Opening a photo (from the grid
 // or its map pin) flies the map there. Videos and Live Photos play as silent loops.
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useState } from 'react';

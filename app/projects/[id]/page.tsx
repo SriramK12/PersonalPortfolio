@@ -29,7 +29,7 @@ export default async function ProjectPage({ params }: Props) {
     <MapStage routes={[r]} initial={r.id} labels={{ [r.id]: project.name }}>
       <Panel className="project-detail">
         <Item>
-          <Link href="/projects/" className="back-link"><BackIcon width={16} height={16} /> Activities</Link>
+          <Link href="/projects/" className="back-link"><BackIcon width={16} height={16} /> Projects</Link>
         </Item>
         <PanelHeading eyebrow={[project.type, project.date].filter(Boolean).join(' · ')} title={project.name}>
           <p className="lede">{project.description}</p>

@@ -3,18 +3,20 @@ import MapStage, { type Pin } from '@/components/map/MapStage';
 import { Item, Panel, PanelHeading } from '@/components/Panel';
 import SegmentList from '@/components/SegmentList';
 import { places, segments as allSegments } from '@/content/site';
-
-const segments = allSegments.filter((s) => !s.hidden);
 import { route } from '@/lib/routes';
 
 export const metadata: Metadata = { title: 'Experience' };
 
+const segments = allSegments.filter((s) => !s.hidden);
+
 export default function Experience() {
-  const routes = segments.map((s) => route(s.id));
+  // Remote roles have no place on the map.
+  const onMap = segments.filter((s) => s.place !== 'remote');
+  const routes = onMap.map((s) => route(s.id));
   const labels = Object.fromEntries(segments.map((s) => [s.id, s.company]));
   // One pin per city name, linked to the first segment there.
   const pins: Pin[] = [];
-  for (const s of segments) {
+  for (const s of onMap) {
     const name = places.find((p) => p.id === s.place)!.name;
     // The first place listed under a city name is its center (e.g. central Austin, not the IBM campus).
     const center = places.find((p) => p.name === name)!.center;
