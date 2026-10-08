@@ -12,7 +12,7 @@ const { STRAVA_CLIENT_ID: id, STRAVA_CLIENT_SECRET: secret, STRAVA_REFRESH_TOKEN
 const log = (msg) => console.log(`[strava] ${msg}`);
 
 // Activity names never shown on the site: drinking, profanity, slang, and low-effort titles.
-// Matched as whole words, case-insensitive. Renaming an activity on Strava also works.
+// Matched as whole words, case-insensitive. Such activities get a Strava-style default name instead.
 const BLOCKED_WORDS = [
   'drink', 'drinks', 'drinking', 'drunk', 'beer', 'beers', 'booze', 'alcohol', 'tipsy', 'hungover', 'hangover', 'wasted', 'shots', 'party', 'partying',
   'damn', 'dammit', 'fuck', 'fucking', 'fucked', 'shit', 'shitty', 'bitch', 'ass', 'asshole', 'crap', 'hell', 'piss', 'pissed', 'dick', 'wtf', 'lmao', 'lmfao', 'bs',
@@ -20,6 +20,15 @@ const BLOCKED_WORDS = [
 ];
 const BLOCKED = new RegExp(`\\b(${BLOCKED_WORDS.join('|')})\\b`, 'i');
 const isProfessional = (name) => !BLOCKED.test(name);
+
+/** Strava's default naming: time of day from the local start time, plus the sport. */
+function defaultName(a) {
+  const hour = Number(a.start_date_local.slice(11, 13));
+  const time = hour >= 4 && hour < 11 ? 'Morning' : hour < 14 && hour >= 11 ? 'Lunch' : hour >= 14 && hour < 17 ? 'Afternoon' : hour >= 17 && hour < 21 ? 'Evening' : 'Night';
+  const type = a.sport_type || a.type || '';
+  const sport = /Run/.test(type) ? 'Run' : /Hike/.test(type) ? 'Hike' : /Ride/.test(type) ? 'Ride' : /Walk/.test(type) ? 'Walk' : 'Activity';
+  return `${time} ${sport}`;
+}
 
 /** Google encoded-polyline decoder; returns [lng, lat] pairs. */
 function decode(str) {
@@ -81,18 +90,16 @@ async function main() {
   const list = await res.json();
 
   const activities = [];
-  let hidden = 0;
+  let renamed = 0;
   for (const a of list) {
     if (a.private || a.visibility !== 'everyone' || a.manual || !a.map?.summary_polyline) continue;
-    if (!isProfessional(a.name)) {
-      hidden++;
-      continue;
-    }
+    const clean = isProfessional(a.name);
+    if (!clean) renamed++;
     const coords = trim(decode(a.map.summary_polyline));
     if (!coords) continue;
     activities.push({
       id: String(a.id),
-      name: a.name,
+      name: clean ? a.name : defaultName(a),
       sport: a.sport_type || a.type,
       date: a.start_date_local.slice(0, 10),
       distance: Math.round(a.distance),
@@ -103,7 +110,7 @@ async function main() {
   }
 
   await writeFile(OUT, JSON.stringify(activities));
-  log(`wrote ${activities.length} public activities (of ${list.length} fetched; ${hidden} hidden by the name filter)`);
+  log(`wrote ${activities.length} public activities (of ${list.length} fetched; ${renamed} renamed by the name filter)`);
 }
 
 main().catch((err) => log(`skipped: ${err.message}`));
