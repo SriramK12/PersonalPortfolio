@@ -10,8 +10,8 @@ export const metadata: Metadata = { title: 'Profile' };
 
 const linkIcons = { GitHub: GithubIcon, LinkedIn: LinkedinIcon, Email: MailIcon, 'Résumé': FileIcon } as const;
 
-// Student organizations from the experience list.
-const clubs = segments.filter((s) => ['Texas Convergent', 'Texas Consulting / HP'].includes(s.company));
+// Student programs and organizations, drawn from the experience list.
+const extracurriculars = ['seg-adobe', 'seg-convergent', 'seg-texas-consulting'].map((id) => segments.find((s) => s.id === id)!);
 
 export default function Profile() {
   return (
@@ -74,9 +74,9 @@ export default function Profile() {
         </Item>
 
         <Item className="profile-section">
-          <h2>Clubs</h2>
+          <h2>Extracurriculars</h2>
           <ul className="gear-list">
-            {clubs.map((c) => <li key={c.id}><ClubIcon /><span><b>{c.company}</b><small>{c.role}</small></span></li>)}
+            {extracurriculars.map((c) => <li key={c.id}><ClubIcon /><span><b>{c.company}</b><small>{[c.role, c.context].filter(Boolean).join(' · ')}</small></span></li>)}
           </ul>
         </Item>
       </Panel>
