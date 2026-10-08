@@ -11,6 +11,16 @@ const { STRAVA_CLIENT_ID: id, STRAVA_CLIENT_SECRET: secret, STRAVA_REFRESH_TOKEN
 
 const log = (msg) => console.log(`[strava] ${msg}`);
 
+// Activity names never shown on the site: drinking, profanity, slang, and low-effort titles.
+// Matched as whole words, case-insensitive. Renaming an activity on Strava also works.
+const BLOCKED_WORDS = [
+  'drink', 'drinks', 'drinking', 'drunk', 'beer', 'beers', 'booze', 'alcohol', 'tipsy', 'hungover', 'hangover', 'wasted', 'shots', 'party', 'partying',
+  'damn', 'dammit', 'fuck', 'fucking', 'fucked', 'shit', 'shitty', 'bitch', 'ass', 'asshole', 'crap', 'hell', 'piss', 'pissed', 'dick', 'wtf', 'lmao', 'lmfao', 'bs',
+  'weed', 'sex', 'sexy', 'freeball', 'freeballing', 'larp', 'jit', 'sum', 'blah', 'random',
+];
+const BLOCKED = new RegExp(`\\b(${BLOCKED_WORDS.join('|')})\\b`, 'i');
+const isProfessional = (name) => !BLOCKED.test(name);
+
 /** Google encoded-polyline decoder; returns [lng, lat] pairs. */
 function decode(str) {
   const out = [];
@@ -71,8 +81,13 @@ async function main() {
   const list = await res.json();
 
   const activities = [];
+  let hidden = 0;
   for (const a of list) {
     if (a.private || a.visibility !== 'everyone' || a.manual || !a.map?.summary_polyline) continue;
+    if (!isProfessional(a.name)) {
+      hidden++;
+      continue;
+    }
     const coords = trim(decode(a.map.summary_polyline));
     if (!coords) continue;
     activities.push({
@@ -88,7 +103,7 @@ async function main() {
   }
 
   await writeFile(OUT, JSON.stringify(activities));
-  log(`wrote ${activities.length} public activities (of ${list.length} fetched)`);
+  log(`wrote ${activities.length} public activities (of ${list.length} fetched; ${hidden} hidden by the name filter)`);
 }
 
 main().catch((err) => log(`skipped: ${err.message}`));
