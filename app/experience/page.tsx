@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import MapStage, { type Pin } from '@/components/map/MapStage';
 import { Item, Panel, PanelHeading } from '@/components/Panel';
 import SegmentList from '@/components/SegmentList';
-import { places, segments } from '@/content/site';
+import { places, segments as allSegments } from '@/content/site';
+
+const segments = allSegments.filter((s) => !s.hidden);
 import { route } from '@/lib/routes';
 
 export const metadata: Metadata = { title: 'Experience' };

@@ -26,6 +26,8 @@ export type Segment = {
   place: Place['id'];
   dates: string;
   highlights: string[];
+  /** Hidden from the Experience page (kept here so it's easy to bring back). */
+  hidden?: boolean;
 };
 
 export const profile = {
@@ -139,14 +141,14 @@ export const segments: Segment[] = [
     ],
   },
   {
-    id: 'seg-adobe', company: 'Adobe', role: 'Product Management & Strategy', context: 'Student Insider', place: 'san-jose', dates: 'Aug 2025 – Aug 2026',
+    id: 'seg-adobe', hidden: true, company: 'Adobe', role: 'Product Management & Strategy', context: 'Student Insider', place: 'san-jose', dates: 'Aug 2025 – Aug 2026',
     highlights: [
       'Tested 12 UI options with Gen Z users, identifying usability friction and informing the design selected for beta launch',
       'Led user research (surveys, 1:1 interviews) and turned insights into product recommendations for Acrobat and Express teams',
     ],
   },
   {
-    id: 'seg-convergent', company: 'Texas Convergent', role: 'Product Lead', context: 'Digital Arts & Media Team', place: 'austin', dates: 'Jan 2025 – May 2026',
+    id: 'seg-convergent', hidden: true, company: 'Texas Convergent', role: 'Product Lead', context: 'Digital Arts & Media Team', place: 'austin', dates: 'Jan 2025 – May 2026',
     highlights: [
       'Designed and pitched 2 AI tools for cross-functional teams (research summarizer, clothing fit visualizer), reaching prototype',
       'Directed Build Teams Demo Day (20+ teams) and Forge Showcase (3 teams), helping 200+ students showcase projects',
@@ -154,7 +156,7 @@ export const segments: Segment[] = [
     ],
   },
   {
-    id: 'seg-texas-consulting', company: 'Texas Consulting / HP', role: 'Technical Lead Developer', context: 'HP client project', place: 'austin', dates: 'Aug 2025 – May 2026',
+    id: 'seg-texas-consulting', hidden: true, company: 'Texas Consulting / HP', role: 'Technical Lead Developer', context: 'HP client project', place: 'austin', dates: 'Aug 2025 – May 2026',
     highlights: [
       'Partnered with 4+ HP engineers and design leads to define AI-powered PC support requirements, specs, and user flows',
       'Segmented 15,000+ profiles by support needs, prioritizing tailored AI troubleshooting workflows for distinct segments',
