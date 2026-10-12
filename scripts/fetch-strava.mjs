@@ -6,12 +6,6 @@ import { writeFile } from 'node:fs/promises';
 
 const OUT = new URL('../content/strava.json', import.meta.url);
 const TRIM_M = 400; // cut from both ends of every route, so tracks don't reveal start/finish points
-// Private zones: any spot where 2+ activities start or end within ZONE_CLUSTER_M is treated like a
-// home. Everything within ZONE_RADIUS_M of it is removed. The circle's center is shifted by
-// ZONE_SHIFT_M in a fixed pseudo-random direction, so the cut ends don't ring the real spot.
-const ZONE_CLUSTER_M = 400;
-const ZONE_RADIUS_M = 1000;
-const ZONE_SHIFT_M = 300;
 const MAX = 24;
 const { STRAVA_CLIENT_ID: id, STRAVA_CLIENT_SECRET: secret, STRAVA_REFRESH_TOKEN: refresh } = process.env;
 
@@ -69,38 +63,6 @@ function dist(a, b) {
   return 2 * 6371008.8 * Math.asin(Math.sqrt(h));
 }
 
-/** Spots that 2+ activities start or end near, as shifted circles of ZONE_RADIUS_M. */
-function privateZones(lines) {
-  const clusters = [];
-  lines.forEach((line, id) => {
-    for (const p of [line[0], line[line.length - 1]]) {
-      const c = clusters.find((k) => dist(k.center, p) < ZONE_CLUSTER_M);
-      if (c) c.ids.add(id);
-      else clusters.push({ center: p, ids: new Set([id]) });
-    }
-  });
-  return clusters.filter((c) => c.ids.size >= 2).map(({ center: [lng, lat] }) => {
-    // Deterministic angle from the coordinates, so the zone is stable from build to build.
-    const angle = ((Math.abs(Math.sin(lng * 12.9898 + lat * 78.233)) * 43758.5453) % 1) * 2 * Math.PI;
-    const dLat = (ZONE_SHIFT_M * Math.cos(angle)) / 111320;
-    const dLng = (ZONE_SHIFT_M * Math.sin(angle)) / (111320 * Math.cos(rad(lat)));
-    return [lng + dLng, lat + dLat];
-  });
-}
-
-/** The longest stretch of the route that stays outside every private zone. */
-function outsideZones(coords, zones) {
-  let best = [];
-  let run = [];
-  for (const p of coords) {
-    if (zones.some((z) => dist(z, p) < ZONE_RADIUS_M)) {
-      if (run.length > best.length) best = run;
-      run = [];
-    } else run.push(p);
-  }
-  return run.length > best.length ? run : best;
-}
-
 /** Drop TRIM_M meters from each end; returns null if too little route is left. */
 function trim(coords) {
   const cut = (line) => {
@@ -134,14 +96,11 @@ async function main() {
   const list = await res.json();
 
   const usable = list.filter((a) => !a.private && a.visibility === 'everyone' && !a.manual && a.map?.summary_polyline);
-  const lines = usable.map((a) => decode(a.map.summary_polyline));
-  const zones = privateZones(lines);
 
   const activities = [];
   let renamed = 0;
-  for (const [i, a] of usable.entries()) {
-    // Activities that sit entirely inside a private zone have nothing left to show.
-    const coords = trim(outsideZones(lines[i], zones));
+  for (const a of usable) {
+    const coords = trim(decode(a.map.summary_polyline));
     if (!coords) continue;
     const clean = isProfessional(a.name);
     if (!clean) renamed++;
@@ -158,7 +117,7 @@ async function main() {
   }
 
   await writeFile(OUT, JSON.stringify(activities));
-  log(`wrote ${activities.length} public activities (of ${list.length} fetched; ${renamed} renamed by the name filter; ${zones.length} private zones)`);
+  log(`wrote ${activities.length} public activities (of ${list.length} fetched; ${renamed} renamed by the name filter)`);
 }
 
 main().catch((err) => log(`skipped: ${err.message}`));
