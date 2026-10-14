@@ -124,7 +124,7 @@ export const segments: Segment[] = [
     highlights: [
       'Diagnosed a 90% agent error rate on live governance queries, then shipped an agent skill that lifted accuracy to 97%',
       'Designed and shipped an AI classification-explanation feature; prioritized 10 SAL backlog items into a 2027 roadmap',
-      'Scoped 2 new MCP execution tools with engineering, filed 4 GitHub defects, and tested the skill with 5 engineers',
+      'Scoped 2 new MCP execution tools with engineering and tested the skill with 5 engineers',
     ],
   },
   {
@@ -155,6 +155,13 @@ export const segments: Segment[] = [
       'Designed and pitched 2 AI tools for cross-functional teams (research summarizer, clothing fit visualizer), reaching prototype',
       'Directed Build Teams Demo Day (20+ teams) and Forge Showcase (3 teams), helping 200+ students showcase projects',
       'Ran the product management curriculum and bi-weekly workshops on prioritization, UI/UX design, and MVP scoping',
+    ],
+  },
+  {
+    id: 'seg-nasa-lspace', hidden: true, company: "NASA L'SPACE", role: 'Technical Team Lead', place: 'remote', dates: 'Dec 2025 – May 2026',
+    highlights: [
+      'Wrote 25+ requirements for a NASA-aligned ISAAC mission proposal, mapping PCoE signals to autonomous ISS operations',
+      'Set performance goals for a predictive-maintenance workstream, hitting sub-0.3% RMSE on NASA PCoE models',
     ],
   },
   {
