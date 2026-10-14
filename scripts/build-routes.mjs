@@ -44,6 +44,7 @@ const ROUTES = {
   plateconnect: [P.capitol, P.east6, P.rainey, P.congressN, P.capitol],
   strata: [P.mccombs, P.shoal, P.pease, P.tower, P.mccombs],
   'seg-ibm': [P.ibm, P.domain, P.ibm],
+  'seg-cloudflare': [P.congressN, P.congressS, P.festival, P.rainey, P.congressN],
   'seg-avion': [P.woodMarket, P.woodWaterway, P.woodHughes, P.woodMarket],
   'seg-adobe': [P.sjPark, P.sjRiver, P.sjPedro, P.sjCesar, P.sjPark],
   'seg-convergent': [P.mccombs, P.speedway, P.gregory, P.mccombs],

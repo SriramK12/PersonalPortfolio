@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: 'Profile' };
 const linkIcons = { GitHub: GithubIcon, LinkedIn: LinkedinIcon, Email: MailIcon, 'Résumé': FileIcon } as const;
 
 // Student programs and organizations, drawn from the experience list.
-const extracurriculars = ['seg-adobe', 'seg-convergent', 'seg-texas-consulting'].map((id) => segments.find((s) => s.id === id)!);
+const extracurriculars = ['seg-adobe', 'seg-convergent', 'seg-nasa-lspace', 'seg-texas-consulting'].map((id) => segments.find((s) => s.id === id)!);
 
 export default function Profile() {
   return (
