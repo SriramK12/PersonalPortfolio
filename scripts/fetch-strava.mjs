@@ -2,6 +2,7 @@
 // Needs STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET and STRAVA_REFRESH_TOKEN (GitHub secrets in CI,
 // .env.local locally; set them with `npm run strava:auth`). Without them, or on any error, it keeps
 // the previous file if one exists and never fails the build; the site falls back to generated routes.
+import { readFileSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 
 const OUT = new URL('../content/strava.json', import.meta.url);
@@ -24,6 +25,27 @@ const BLOCKED_WORDS = [
 ];
 const BLOCKED = new RegExp(`(${PROFANITY.join('|')})|\\b(${BLOCKED_WORDS.join('|')})\\b`, 'i');
 const isProfessional = (name) => !BLOCKED.test(name);
+
+// Real English words containing a double letter (from the macOS /usr/share/dict word list), used to
+// tell "goooood" (good) from "zoneeee" (zone) when undoing stretched letters.
+const DOUBLED = new Set(readFileSync(new URL('./data/doubled-words.txt', import.meta.url), 'utf8').split('\n'));
+// A word counts if it or its stem is a real word, or if it's a compound that starts with one: a
+// 4+ letter word covering the doubled letters, followed by 3+ more letters ("cool" + "down").
+function isDoubledWord(w) {
+  if ([w, w.replace(/(es|s|ed|ing)$/, '')].some((x) => DOUBLED.has(x))) return true;
+  const end = w.search(/(.)\1/) + 2;
+  for (let i = Math.max(end, 4); i <= w.length - 3; i++) if (DOUBLED.has(w.slice(0, i))) return true;
+  return false;
+}
+
+/** Undo letters stretched for emphasis: "Zoneeeee 2" → "Zone 2", "Goooood run" → "Good run". */
+function unstretch(name) {
+  return name.replace(/[A-Za-z]+/g, (word) => {
+    if (!/([a-z])\1\1/i.test(word)) return word;
+    const double = word.replace(/([a-z])\1{2,}/gi, '$1$1');
+    return isDoubledWord(double.toLowerCase()) ? double : word.replace(/([a-z])\1{2,}/gi, '$1');
+  });
+}
 
 /** Strava-style name from the local start time and sport; activities over 4 miles lead with their
  * distance rounded down, e.g. a 5.32-mile run at 10pm becomes "5-mile Night Run". */
@@ -99,14 +121,17 @@ async function main() {
 
   const activities = [];
   let renamed = 0;
+  let unstretched = 0;
   for (const a of usable) {
     const coords = trim(decode(a.map.summary_polyline));
     if (!coords) continue;
-    const clean = isProfessional(a.name);
+    const name = unstretch(a.name);
+    if (name !== a.name) unstretched++;
+    const clean = isProfessional(name);
     if (!clean) renamed++;
     activities.push({
       id: String(a.id),
-      name: clean ? a.name : defaultName(a),
+      name: clean ? name : defaultName(a),
       sport: a.sport_type || a.type,
       date: a.start_date_local.slice(0, 10),
       distance: Math.round(a.distance),
@@ -117,7 +142,7 @@ async function main() {
   }
 
   await writeFile(OUT, JSON.stringify(activities));
-  log(`wrote ${activities.length} public activities (of ${list.length} fetched; ${renamed} renamed by the name filter)`);
+  log(`wrote ${activities.length} public activities (of ${list.length} fetched; ${renamed} renamed by the name filter; ${unstretched} with stretched letters fixed)`);
 }
 
 main().catch((err) => log(`skipped: ${err.message}`));
