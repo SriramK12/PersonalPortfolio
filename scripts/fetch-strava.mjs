@@ -47,12 +47,12 @@ function unstretch(name) {
   });
 }
 
-/** Name from the local start time and sport: Morning (4am–noon), Evening (noon–8pm) or Night
- * (8pm–4am). Activities over 4 miles lead with their distance rounded down, e.g. a 5.32-mile run
+/** Name from the local start time and sport: Morning (4am–noon), Afternoon (noon–3pm), Evening
+ * (3–8pm) or Night (8pm–4am). Activities over 4 miles lead with their distance rounded down, e.g. a 5.32-mile run
  * at 10pm becomes "5-mile Night Run". */
 function defaultName(a) {
   const hour = Number(a.start_date_local.slice(11, 13));
-  const time = hour >= 4 && hour < 12 ? 'Morning' : hour >= 12 && hour < 20 ? 'Evening' : 'Night';
+  const time = hour >= 4 && hour < 12 ? 'Morning' : hour >= 12 && hour < 15 ? 'Afternoon' : hour >= 15 && hour < 20 ? 'Evening' : 'Night';
   const type = a.sport_type || a.type || '';
   const sport = /Run/.test(type) ? 'Run' : /Hike/.test(type) ? 'Hike' : /Ride/.test(type) ? 'Ride' : /Walk/.test(type) ? 'Walk' : 'Activity';
   const miles = a.distance / 1609.344;
