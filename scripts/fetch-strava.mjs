@@ -47,11 +47,12 @@ function unstretch(name) {
   });
 }
 
-/** Strava-style name from the local start time and sport; activities over 4 miles lead with their
- * distance rounded down, e.g. a 5.32-mile run at 10pm becomes "5-mile Night Run". */
+/** Name from the local start time and sport: Morning (4am–noon), Evening (noon–8pm) or Night
+ * (8pm–4am). Activities over 4 miles lead with their distance rounded down, e.g. a 5.32-mile run
+ * at 10pm becomes "5-mile Night Run". */
 function defaultName(a) {
   const hour = Number(a.start_date_local.slice(11, 13));
-  const time = hour >= 4 && hour < 11 ? 'Morning' : hour < 14 && hour >= 11 ? 'Lunch' : hour >= 14 && hour < 17 ? 'Afternoon' : hour >= 17 && hour < 21 ? 'Evening' : 'Night';
+  const time = hour >= 4 && hour < 12 ? 'Morning' : hour >= 12 && hour < 20 ? 'Evening' : 'Night';
   const type = a.sport_type || a.type || '';
   const sport = /Run/.test(type) ? 'Run' : /Hike/.test(type) ? 'Hike' : /Ride/.test(type) ? 'Ride' : /Walk/.test(type) ? 'Walk' : 'Activity';
   const miles = a.distance / 1609.344;
@@ -125,10 +126,13 @@ async function main() {
   for (const a of usable) {
     const coords = trim(decode(a.map.summary_polyline));
     if (!coords) continue;
+    // Runs are always named by time of day, whatever they're called on Strava. Other activities
+    // keep their names, cleaned up: stretched letters undone, unprofessional names replaced.
+    const isRun = /Run/.test(a.sport_type || a.type || '');
     const name = unstretch(a.name);
-    if (name !== a.name) unstretched++;
-    const clean = isProfessional(name);
-    if (!clean) renamed++;
+    if (!isRun && name !== a.name) unstretched++;
+    const clean = !isRun && isProfessional(name);
+    if (!isRun && !clean) renamed++;
     activities.push({
       id: String(a.id),
       name: clean ? name : defaultName(a),
@@ -142,7 +146,7 @@ async function main() {
   }
 
   await writeFile(OUT, JSON.stringify(activities));
-  log(`wrote ${activities.length} public activities (of ${list.length} fetched; ${renamed} renamed by the name filter; ${unstretched} with stretched letters fixed)`);
+  log(`wrote ${activities.length} public activities (of ${list.length} fetched; runs named by time of day; ${renamed} other names replaced by the filter; ${unstretched} with stretched letters fixed)`);
 }
 
 main().catch((err) => log(`skipped: ${err.message}`));
