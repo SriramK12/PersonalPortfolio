@@ -8,7 +8,6 @@
     "start": "next start --hostname 0.0.0.0",
     "typecheck": "tsc --noEmit",
     "build:preview": "PREVIEW_STATIC_EXPORT=1 next build",
-    "routes": "node scripts/build-routes.mjs",
     "predev": "node scripts/copy-map-worker.mjs && npm run -s strava",
     "prebuild": "node scripts/copy-map-worker.mjs && npm run -s strava",
     "prebuild:preview": "node scripts/copy-map-worker.mjs && npm run -s strava",

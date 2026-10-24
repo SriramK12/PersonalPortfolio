@@ -2,8 +2,7 @@
 // The file is absent until Strava is connected; every caller must handle an empty list.
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { downsample, toMiles, Track, type LngLat } from './geo';
-import type { RouteData } from './routes';
+import { downsample, toMiles, type LngLat } from './geo';
 
 export type StravaActivity = {
   id: string;
@@ -25,16 +24,6 @@ export function stravaActivities(): StravaActivity[] {
     return [];
   }
 }
-
-export const stravaRouteId = (a: StravaActivity) => `strava-${a.id}`;
-
-export function stravaRoute(a: StravaActivity, max = 400): RouteData {
-  return { id: stravaRouteId(a), coords: downsample(a.coords, max), length: new Track(a.coords).length };
-}
-
-/** Real totals for the map HUD, keyed by route id. */
-export const stravaStats = (list: StravaActivity[]) =>
-  Object.fromEntries(list.map((a) => [stravaRouteId(a), { distance: a.distance, movingTime: a.movingTime }]));
 
 export const stravaThumb = (a: StravaActivity) => downsample(a.coords, 70);
 

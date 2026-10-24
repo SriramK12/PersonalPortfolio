@@ -35,7 +35,8 @@ export const profile = {
   initials: 'SK',
   school: 'The University of Texas at Austin',
   classYear: '2028',
-  tagline: 'Product Manager.',
+  // The home-page headline swaps between these.
+  roles: ['Product Manager.', 'Product Designer.'],
   bio: "I study Management Information Systems and Psychology at the University of Texas at Austin. Outside of school, I'm usually chasing the next adventure, whether that's traveling somewhere new, training for a half marathon (my first one is coming up), playing tennis, or picking up a new language.",
   degrees: ['BBA, Management Information Systems', 'BA, Psychology'],
   avatar: '/media/avatar.jpg',

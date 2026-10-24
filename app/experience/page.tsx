@@ -1,41 +1,44 @@
 import type { Metadata } from 'next';
-import MapStage, { type Pin } from '@/components/map/MapStage';
-import { Item, Panel, PanelHeading } from '@/components/Panel';
-import SegmentList from '@/components/SegmentList';
-import { places, segments as allSegments } from '@/content/site';
-import { route } from '@/lib/routes';
+import FlipCard from '@/components/FlipCard';
+import { PinIcon } from '@/components/Icons';
+import { Item, Page, PageHeading } from '@/components/Panel';
+import { placeName, segments as allSegments } from '@/content/site';
 
 export const metadata: Metadata = { title: 'Experience' };
 
-const segments = allSegments.filter((s) => !s.hidden);
+const roles = allSegments.filter((s) => !s.hidden);
 
 export default function Experience() {
-  // Remote roles have no place on the map.
-  const onMap = segments.filter((s) => s.place !== 'remote');
-  const routes = onMap.map((s) => route(s.id));
-  const labels = Object.fromEntries(segments.map((s) => [s.id, s.company]));
-  // One pin per city name, linked to the first segment there.
-  const pins: Pin[] = [];
-  for (const s of onMap) {
-    const name = places.find((p) => p.id === s.place)!.name;
-    // The first place listed under a city name is its center (e.g. central Austin, not the IBM campus).
-    const center = places.find((p) => p.name === name)!.center;
-    if (!pins.some((p) => p.label === name)) pins.push({ routeId: s.id, center, label: name });
-  }
-  // Put a label on the left when another pin sits close by to the east, so labels don't collide.
-  for (const pin of pins) if (pins.some((o) => o !== pin && o.center[0] > pin.center[0] && o.center[0] - pin.center[0] < 6 && Math.abs(o.center[1] - pin.center[1]) < 3)) pin.side = 'left';
-  const cities = new Set(pins.map((p) => p.label)).size;
-
   return (
-    <MapStage routes={routes} initial={null} labels={labels} pins={pins}>
-      <Panel>
-        <PanelHeading eyebrow={`${segments.length} roles · ${cities} cities`} title="Experience">
-          <p className="lede">Roles and teams along the way. Hover to fly there, click for details.</p>
-        </PanelHeading>
-        <Item>
-          <SegmentList segments={segments} />
-        </Item>
-      </Panel>
-    </MapStage>
+    <Page>
+      <PageHeading eyebrow={`${roles.length} roles`} title="Experience">
+        <p className="lede">Where I've worked. Click a card to flip it.</p>
+      </PageHeading>
+      <Item as="ul" className="card-grid">
+        {roles.map((s) => (
+          <li key={s.id}>
+            <FlipCard
+              label={s.company}
+              front={
+                <>
+                  <span className="card-tag"><PinIcon width={12} height={12} /> {placeName(s.place)}</span>
+                  <span className="card-title">{s.company}</span>
+                  <span className="card-sub">{s.role}</span>
+                </>
+              }
+              back={
+                <>
+                  <h2 className="card-back-title">{s.company}</h2>
+                  <p className="card-meta">{[s.role, s.context].filter(Boolean).join(' · ')}</p>
+                  <ul className="card-list">
+                    {s.highlights.map((h) => <li key={h}>{h}</li>)}
+                  </ul>
+                </>
+              }
+            />
+          </li>
+        ))}
+      </Item>
+    </Page>
   );
 }

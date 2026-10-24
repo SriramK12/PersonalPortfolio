@@ -82,9 +82,3 @@ export function greatCircle(a: LngLat, b: LngLat, steps = 128): LngLat[] {
 }
 
 export const toMiles = (m: number) => m / 1609.344;
-
-/** Walking time at 3 mph, formatted like an activity duration. */
-export function walkTime(m: number) {
-  const mins = Math.round((toMiles(m) / 3) * 60);
-  return mins >= 60 ? `${Math.floor(mins / 60)}h ${String(mins % 60).padStart(2, '0')}m` : `${mins}m`;
-}

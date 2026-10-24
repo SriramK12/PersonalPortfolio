@@ -1,12 +1,11 @@
 'use client';
-// The content sheet that floats over the map: a left column on desktop, a bottom sheet on mobile.
-// Children wrapped in <Item> enter in sequence.
+// Full-width section page. Children wrapped in <Item> enter in sequence.
 import { motion, type Variants } from 'motion/react';
 import type { ReactNode } from 'react';
 
 const sheet: Variants = {
-  hidden: { opacity: 0, x: -36, y: 0 },
-  shown: { opacity: 1, x: 0, y: 0, transition: { type: 'spring', stiffness: 170, damping: 24, staggerChildren: 0.06, delayChildren: 0.12 } },
+  hidden: { opacity: 0 },
+  shown: { opacity: 1, transition: { staggerChildren: 0.06, delayChildren: 0.08 } },
 };
 
 const item: Variants = {
@@ -14,14 +13,12 @@ const item: Variants = {
   shown: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { type: 'spring', stiffness: 240, damping: 26 } },
 };
 
-export function Panel({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function Page({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <motion.section className={`panel ${className}`} variants={sheet} initial="hidden" animate="shown">
-      <div className="panel-grip" aria-hidden="true" />
+    <motion.section className={`page ${className}`} variants={sheet} initial="hidden" animate="shown">
       {children}
-      <motion.footer className="panel-footer" variants={item}>
+      <motion.footer className="page-footer" variants={item}>
         <span>© {new Date().getFullYear()} Sriram Kakumanu</span>
-        <span>Map © OpenStreetMap contributors</span>
       </motion.footer>
     </motion.section>
   );
@@ -32,9 +29,9 @@ export function Item({ children, className, id, as = 'div' }: { children: ReactN
   return <Tag className={className} id={id} variants={item}>{children}</Tag>;
 }
 
-export function PanelHeading({ eyebrow, title, children }: { eyebrow?: string; title: string; children?: ReactNode }) {
+export function PageHeading({ eyebrow, title, children }: { eyebrow?: string; title: string; children?: ReactNode }) {
   return (
-    <Item as="header" className="panel-heading">
+    <Item as="header" className="page-heading">
       {eyebrow && <p className="eyebrow">{eyebrow}</p>}
       <h1>{title}</h1>
       {children}

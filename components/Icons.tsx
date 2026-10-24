@@ -10,14 +10,10 @@ export const PlaneIcon = (p: P) => <svg {...base(p)}><path d="M21 15.5v-2l-8-5V3
 export const SegmentIcon = (p: P) => <svg {...base(p)}><path d="M4 18c3-1 4-6 8-6s5 4 8 3" /><circle cx="4" cy="18" r="1.6" fill="currentColor" /><circle cx="20" cy="15" r="1.6" fill="currentColor" /></svg>;
 export const RouteIcon = (p: P) => <svg {...base(p)}><circle cx="6" cy="18" r="2.2" /><circle cx="18" cy="6" r="2.2" /><path d="M8.2 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.8" /></svg>;
 export const ProfileIcon = (p: P) => <svg {...base(p)}><circle cx="12" cy="8" r="3.6" /><path d="M4.5 20c1.2-3.7 4-5.5 7.5-5.5s6.3 1.8 7.5 5.5" /></svg>;
-export const KudosIcon = (p: P) => <svg {...base(p)}><path d="M7 21V10l4.5-7c1.6 0 2.5 1.2 2.1 2.8L12.8 9H19a2 2 0 0 1 2 2.3l-1.2 7.4A2.7 2.7 0 0 1 17.2 21H7Z" /><path d="M7 10H3.5v11H7" /></svg>;
 export const ArrowIcon = (p: P) => <svg {...base(p)}><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
 export const BackIcon = (p: P) => <svg {...base(p)}><path d="M19 12H5M11 6l-6 6 6 6" /></svg>;
 export const ExternalIcon = (p: P) => <svg {...base(p)}><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" /></svg>;
 export const PinIcon = (p: P) => <svg {...base(p)}><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11Z" /><circle cx="12" cy="10" r="2.3" /></svg>;
-export const CheckIcon = (p: P) => <svg {...base(p)}><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>;
-export const StopIcon = (p: P) => <svg {...base(p)}><rect x="6.5" y="6.5" width="11" height="11" rx="2" fill="currentColor" stroke="none" /></svg>;
-export const GpsIcon = (p: P) => <svg {...base(p)}><circle cx="12" cy="12" r="3" /><circle cx="12" cy="12" r="7.5" /><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22" /></svg>;
 export const GearIcon = (p: P) => <svg {...base(p)}><path d="M4 7.5 12 4l8 3.5-8 3.5-8-3.5Z" /><path d="M7 9.5V14c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V9.5" /><path d="M20 7.5V13" /></svg>;
 export const ClubIcon = (p: P) => <svg {...base(p)}><circle cx="8" cy="9" r="3" /><circle cx="16.5" cy="9.5" r="2.5" /><path d="M2.5 19c.8-3 2.9-4.5 5.5-4.5s4.7 1.5 5.5 4.5M14 14.6c.8-.4 1.6-.6 2.5-.6 2.3 0 4 1.3 4.7 4" /></svg>;
 export const TrophyIcon = (p: P) => <svg {...base(p)}><path d="M8 4h8v5a4 4 0 0 1-8 0V4Z" /><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7M10 17h4v3h-4z" /></svg>;
