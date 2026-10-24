@@ -11,6 +11,7 @@ import type { Destination } from '@/content/site';
 import { bearing, bounds, distance, greatCircle, toMiles, Track, type LngLat } from '@/lib/geo';
 import { createMap, reducedMotion, saveCamera } from '@/lib/map';
 import { PlaneIcon } from '../Icons';
+import RoleSwap from './RoleSwap';
 
 const ORANGE = '#fc4c02';
 const PLANE_KEY = 'sk-plane'; // the destination the plane last landed at
@@ -23,7 +24,7 @@ const trailGradient = (p: number): ExpressionSpecification =>
 
 const line = (coords: LngLat[]) => ({ type: 'Feature' as const, properties: {}, geometry: { type: 'LineString' as const, coordinates: coords } });
 
-export default function FlightDeck({ name, tagline, destinations, home }: { name: string; tagline: string; destinations: Destination[]; home: string }) {
+export default function FlightDeck({ name, roles, destinations, home }: { name: string; roles: string[]; destinations: Destination[]; home: string }) {
   const router = useRouter();
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MLMap | null>(null);
@@ -179,7 +180,7 @@ export default function FlightDeck({ name, tagline, destinations, home }: { name
             <motion.div key="hero" className="home-hero" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -24, filter: 'blur(6px)' }} transition={{ type: 'spring', stiffness: 200, damping: 24 }}>
               <p className="gps-chip is-locked"><span className="gps-led" /> Cleared for takeoff · {origin.code}</p>
               <h1 className="intro-title">{name}</h1>
-              <p className="intro-sub">{tagline}</p>
+              <RoleSwap roles={roles} />
               <motion.button type="button" className="record-button" onClick={() => setPhase('choose')} whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.92 }} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.3 }}>
                 <span className="record-pulse" aria-hidden="true" />
                 Start

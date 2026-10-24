@@ -1,17 +1,16 @@
 'use client';
-// Photo grid for the Personal page, plus a full-screen viewer. Opening a photo (from the grid
-// or its map pin) flies the map there. Videos and Live Photos play as silent loops.
+// Photo grid for the Personal page, plus a full-screen viewer. Videos and Live Photos play as
+// silent loops.
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { photoSrc, videoSrc, type Photo } from '@/content/photos';
-import { useStage } from './map/MapStage';
 import { ArrowIcon, BackIcon, PinIcon } from './Icons';
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
 export default function PhotoGallery({ photos }: { photos: Photo[] }) {
-  const { photo, setPhoto } = useStage();
+  const [photo, setPhoto] = useState<string | null>(null);
   const index = photos.findIndex((p) => p.id === photo);
   const current = index >= 0 ? photos[index] : null;
   // The viewer is portaled to <body>: the panel's animated transform/filter would trap a fixed overlay.

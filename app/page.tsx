@@ -3,5 +3,5 @@ import { destinations, profile } from '@/content/site';
 
 export default function Home() {
   // The plane starts at home (Frisco) on a first visit, then wherever it last landed.
-  return <FlightDeck name={profile.name} tagline={profile.tagline} destinations={destinations} home="profile" />;
+  return <FlightDeck name={profile.name} roles={profile.roles} destinations={destinations} home="profile" />;
 }
