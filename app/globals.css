@@ -343,9 +343,13 @@ main > * { pointer-events: auto; }
 .home-hero .record-button { margin-top: 18px; }
 .intro-title { font-size: clamp(44px, 8vw, 92px); font-weight: 800; letter-spacing: -0.05em; line-height: 0.95; text-shadow: 0 2px 30px var(--map-bg); }
 .intro-sub { font-size: 18px; font-weight: 500; color: var(--muted); }
-/* The title swap: one line tall, clipped so titles slide in and out sideways. */
-.role-swap { display: grid; justify-items: center; min-width: 16ch; height: 1.6em; overflow: hidden; font-size: 22px; font-weight: 600; color: var(--text); }
-.role-swap span { grid-area: 1 / 1; white-space: nowrap; }
+/* The title swap: one line tall; titles share one grid cell and fade out softly at the edges. */
+.role-swap {
+  display: grid; justify-items: center; min-width: 18ch; height: 1.6em; font-size: 22px; font-weight: 600; color: var(--text);
+  mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+}
+.role-swap span { grid-area: 1 / 1; white-space: nowrap; will-change: transform, opacity; }
 .gps-chip {
   display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
   background: var(--surface); box-shadow: var(--shadow); font-size: 13px; font-weight: 600; color: var(--muted);
