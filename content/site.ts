@@ -16,6 +16,12 @@ export type Project = {
   splits: Stat[];
   href?: string;
   date: string;
+  /** Shown as chips on the card. */
+  tags?: string[];
+  /** Thumbnail on the card front, relative to the site root. */
+  image?: string;
+  /** Has its own hand-built page at /projects/<id>/ instead of the generic project template. */
+  caseStudy?: boolean;
 };
 
 export type Segment = {
@@ -57,6 +63,23 @@ export const places: Place[] = [
 ];
 
 export const projects: Project[] = [
+  {
+    id: 'duolingo-goal-path',
+    name: 'Duolingo Goal Path',
+    type: 'Case study',
+    summary: "A PM take-home: letting a learner's goal choose their lessons",
+    description: "Let a learner's goal pick the situations they practice. A product management take-home: interviews, review analysis, feature definition, screen mockups, KPI choice and a validation plan. Submitted; not built or shipped.",
+    stats: [
+      { label: 'Interviews', value: '5' },
+      { label: 'Reviews', value: '500' },
+      { label: 'Status', value: 'Take-home' },
+    ],
+    splits: [],
+    date: '',
+    tags: ['Product Management', 'Research', 'Mockups'],
+    image: '/media/projects/duolingo-goal-path/path-with-goal-unit-450.jpg',
+    caseStudy: true,
+  },
   {
     id: 'studysense',
     name: 'StudySense',

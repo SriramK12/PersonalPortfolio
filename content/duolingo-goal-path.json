@@ -1,0 +1,118 @@
+{
+ "reviews": {
+  "source": "500 most recent US App Store reviews for Duolingo, as of Oct 16, 2026 (feed dates Oct 11 to Oct 14, 2026). Average 3.95 stars. Main issue per review tagged by hand by one person, so approximate.",
+  "total": 500,
+  "no_complaint": 267,
+  "with_issue": 233,
+  "issue_breakdown_of_233": [
+   {
+    "label": "Other",
+    "count": 60,
+    "pct": 26
+   },
+   {
+    "label": "Energy limits",
+    "count": 36,
+    "pct": 15
+   },
+   {
+    "label": "Paywall & pricing",
+    "count": 36,
+    "pct": 15
+   },
+   {
+    "label": "Streak & reminder pressure",
+    "count": 30,
+    "pct": 13
+   },
+   {
+    "label": "Content generalization",
+    "count": 26,
+    "pct": 11
+   },
+   {
+    "label": "Bugs & UI",
+    "count": 23,
+    "pct": 10
+   },
+   {
+    "label": "Ads & upsells",
+    "count": 22,
+    "pct": 9
+   }
+  ],
+  "note_on_content_slice": "The 26 reviews in this slice are about content and learning quality. Of those, 8 explicitly describe the content as too generic, not relevant, or not tailored (about 3% of the 233). The other 18 are about things like grammar explanations, repetition, and new-word floods after course updates."
+ },
+ "interviews": [
+  {
+   "id": "Interviewee A",
+   "status": "Active",
+   "streak_days": 937,
+   "issues": [
+    "Battery drains fast",
+    "Content generalization",
+    "AI grammar and dialect mismatch",
+    "Few languages",
+    "Buggy widgets",
+    "Streak breaks from travel",
+    "Single-answer chess"
+   ]
+  },
+  {
+   "id": "Interviewee B",
+   "status": "Active",
+   "streak_days": 1007,
+   "issues": [
+    "Streak-only motivation",
+    "Content generalization",
+    "Too theoretical",
+    "AI grammar errors",
+    "Busy UI",
+    "Annoying reminders",
+    "Ads after lessons",
+    "No free conversation practice"
+   ]
+  },
+  {
+   "id": "Interviewee C",
+   "status": "Active",
+   "streak_days": 1264,
+   "issues": [
+    "Energy drains on correct answers",
+    "Premium not worth it",
+    "Uses app less"
+   ]
+  },
+  {
+   "id": "Interviewee D",
+   "status": "Not active",
+   "streak_days": null,
+   "issues": [
+    "Finished his Spanish class, no longer needs it"
+   ]
+  },
+  {
+   "id": "Interviewee E",
+   "status": "On and off",
+   "streak_days": null,
+   "issues": [
+    "Lost interest in streak",
+    "Can't hold a conversation in real life",
+    "Content generalization"
+   ]
+  }
+ ],
+ "kpi": {
+  "headline": "DAU",
+  "driver": "Lessons per DAU",
+  "dau_q2_2026": "58.7M, up 23% year over year",
+  "dau_source": "https://www.sec.gov/Archives/edgar/data/0001562088/000162828026053299/q2fy26duolingo6-30x26share.htm",
+  "roi_illustration": "+1% DAU is about +587K daily learners (1% of 58.7M). An illustration of scale, not a forecast."
+ },
+ "verified_quotes": [
+  {
+   "source": "Slide 2 of the submitted deck, paraphrasing an interviewee with a 1,000+ day streak",
+   "text": "the lessons aren't usable in real life"
+  }
+ ]
+}
