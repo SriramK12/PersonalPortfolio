@@ -21,8 +21,17 @@ export default function Projects() {
               front={
                 <>
                   <span className="card-tag">{p.type}</span>
+                  {p.image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img className="card-thumb" src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}${p.image}`} alt="" loading="lazy" />
+                  )}
                   <span className="card-title">{p.name}</span>
                   <span className="card-sub">{p.summary}</span>
+                  {p.tags && (
+                    <span className="card-chips">
+                      {p.tags.map((t) => <span key={t}>{t}</span>)}
+                    </span>
+                  )}
                 </>
               }
               back={

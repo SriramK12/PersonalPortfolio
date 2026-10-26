@@ -6,7 +6,8 @@ import { Item, Page, PageHeading } from '@/components/Panel';
 import { projects } from '@/content/site';
 
 export const dynamicParams = false;
-export const generateStaticParams = () => projects.map((p) => ({ id: p.id }));
+// Case studies have their own pages (e.g. app/projects/duolingo-goal-path).
+export const generateStaticParams = () => projects.filter((p) => !p.caseStudy).map((p) => ({ id: p.id }));
 
 type Props = { params: Promise<{ id: string }> };
 
