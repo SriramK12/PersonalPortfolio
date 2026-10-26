@@ -20,11 +20,14 @@ export default function Projects() {
               label={p.name}
               front={
                 <>
-                  <span className="card-tag">{p.type}</span>
-                  {p.image && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img className="card-thumb" src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}${p.image}`} alt="" loading="lazy" />
-                  )}
+                  {/* Tag and thumbnail share the top row, so the thumbnail never sits over the text. */}
+                  <span className="card-top">
+                    <span className="card-tag">{p.type}</span>
+                    {p.image && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img className="card-thumb" src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}${p.image}`} alt="" loading="lazy" />
+                    )}
+                  </span>
                   <span className="card-title">{p.name}</span>
                   <span className="card-sub">{p.summary}</span>
                   {p.tags && (

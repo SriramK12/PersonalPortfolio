@@ -164,7 +164,7 @@ main > * { pointer-events: auto; }
    Flip cards
    ========================================================================== */
 .card-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
-.flip { height: 420px; perspective: 1400px; }
+.flip { height: 420px; perspective: 1400px; container-type: inline-size; }
 .flip-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
 .flip-face {
   position: absolute; inset: 0; display: flex; flex-direction: column;
@@ -172,7 +172,8 @@ main > * { pointer-events: auto; }
   backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden;
 }
 .flip-front {
-  justify-content: flex-end; gap: 8px; padding: 28px; text-align: left; cursor: pointer; color: inherit;
+  /* 'safe' keeps overflow at the bottom instead of pushing the top of the card out of view. */
+  justify-content: safe flex-end; gap: 8px; padding: 28px; text-align: left; cursor: pointer; color: inherit;
   background:
     radial-gradient(circle at 85% 15%, rgba(252, 76, 2, 0.22), transparent 55%),
     linear-gradient(160deg, var(--surface-2), var(--surface));
@@ -185,17 +186,23 @@ main > * { pointer-events: auto; }
   padding: 4px 10px; border-radius: 999px; background: var(--orange-soft); color: var(--orange);
   font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
 }
-/* A phone screen peeking in from the top right of the card front. */
+/* Top row of a project card: the tag on the left, an optional phone-screen thumbnail on the right.
+   It takes the free space above the text, so the two never overlap. */
+.card-top { display: flex; flex-shrink: 0; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: auto; padding-bottom: 10px; }
+.card-top .card-tag { position: static; flex-shrink: 0; }
 .card-thumb {
-  position: absolute; top: 28px; right: -18px; width: 44%; border-radius: 14px; rotate: 8deg;
-  border: 1px solid var(--line); box-shadow: var(--shadow-lg); pointer-events: none;
+  width: 34%; max-height: 110px; object-fit: cover; object-position: top; border-radius: 12px; rotate: 6deg;
+  margin: -4px -10px 0 0; border: 1px solid var(--line); box-shadow: var(--shadow-lg); pointer-events: none;
   transition: rotate 0.5s var(--spring), translate 0.5s var(--spring);
 }
-.flip-front:hover .card-thumb { rotate: 4deg; translate: -6px -4px; }
-.flip-front:has(.card-thumb) .card-title, .flip-front:has(.card-thumb) .card-sub { position: relative; max-width: 62%; }
+.flip-front:hover .card-thumb { rotate: 3deg; translate: -4px -2px; }
 .card-chips { position: relative; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 .card-chips span { padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px; font-size: 11px; font-weight: 600; color: var(--muted); background: var(--surface); }
-.card-title { font-size: clamp(30px, 3.4vw, 40px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; }
+.card-title {
+  /* Sized by the card's own width (cqi), so long names like "PlateConnect" fit in narrow cards. */
+  font-size: clamp(22px, 10.5cqi, 40px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05;
+  overflow-wrap: break-word;
+}
 .card-sub { font-size: 15px; color: var(--muted); }
 .flip-hint { margin-top: 10px; font-size: 12px; font-weight: 600; color: var(--faint); transition: color 0.2s; }
 .flip-front:hover .flip-hint { color: var(--orange); }
@@ -545,7 +552,6 @@ main > * { pointer-events: auto; }
 
   .page { padding: calc(var(--topbar) + 28px) 16px calc(76px + env(safe-area-inset-bottom)); gap: 22px; }
   .card-grid { gap: 16px; }
-  .flip { height: 380px; }
   .maplibregl-ctrl-bottom-right { display: none; }
 
   .cs-final { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 18px 14px; }
