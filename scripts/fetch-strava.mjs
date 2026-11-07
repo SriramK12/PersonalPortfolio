@@ -7,7 +7,9 @@ import { writeFile } from 'node:fs/promises';
 
 const OUT = new URL('../content/strava.json', import.meta.url);
 const TRIM_M = 400; // cut from both ends of every route, so tracks don't reveal start/finish points
-const MAX = 24;
+// Kept per sport, so a busy month of runs can't push the hikes off the site.
+const MAX_PER_SPORT = 24;
+const sportOf = (a) => { const t = a.sport_type || a.type || ''; return /Run/.test(t) ? 'Run' : /Hike/.test(t) ? 'Hike' : t; };
 const { STRAVA_CLIENT_ID: id, STRAVA_CLIENT_SECRET: secret, STRAVA_REFRESH_TOKEN: refresh } = process.env;
 
 const log = (msg) => console.log(`[strava] ${msg}`);
@@ -112,7 +114,8 @@ async function main() {
   if (!tokenRes.ok) throw new Error(`token refresh failed (HTTP ${tokenRes.status})`);
   if (token.refresh_token !== refresh) log('warning: Strava issued a new refresh token; rerun `npm run strava:auth` if fetching starts failing');
 
-  const res = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=60', {
+  // 200 is the API's page maximum: enough history to still find hikes from months ago.
+  const res = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=200', {
     headers: { authorization: `Bearer ${token.access_token}` },
   });
   if (!res.ok) throw new Error(`activities request failed (HTTP ${res.status})`);
@@ -121,9 +124,12 @@ async function main() {
   const usable = list.filter((a) => !a.private && a.visibility === 'everyone' && !a.manual && a.map?.summary_polyline);
 
   const activities = [];
+  const perSport = {};
   let renamed = 0;
   let unstretched = 0;
   for (const a of usable) {
+    const sport = sportOf(a);
+    if ((perSport[sport] ?? 0) >= MAX_PER_SPORT) continue;
     const coords = trim(decode(a.map.summary_polyline));
     if (!coords) continue;
     // Runs are always named by time of day, whatever they're called on Strava. Other activities
@@ -142,11 +148,12 @@ async function main() {
       movingTime: a.moving_time,
       coords,
     });
-    if (activities.length >= MAX) break;
+    perSport[sport] = (perSport[sport] ?? 0) + 1;
   }
 
   await writeFile(OUT, JSON.stringify(activities));
-  log(`wrote ${activities.length} public activities (of ${list.length} fetched; runs named by time of day; ${renamed} other names replaced by the filter; ${unstretched} with stretched letters fixed)`);
+  const counts = Object.entries(perSport).map(([k, n]) => `${n} ${k}`).join(', ');
+  log(`wrote ${activities.length} public activities: ${counts} (of ${list.length} fetched; runs named by time of day; ${renamed} other names replaced by the filter; ${unstretched} with stretched letters fixed)`);
 }
 
 main().catch((err) => log(`skipped: ${err.message}`));
